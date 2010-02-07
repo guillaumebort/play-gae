@@ -3,7 +3,6 @@ package play.modules.gae;
 import com.google.appengine.tools.development.ApiProxyLocalImpl;
 import com.google.apphosting.api.ApiProxy;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -11,18 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.mail.Session;
 import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Persistence;
-import javax.persistence.metamodel.ManagedType;
 import javax.persistence.spi.ClassTransformer;
 import javax.persistence.spi.PersistenceUnitInfo;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.sql.DataSource;
 import org.datanucleus.enhancer.DataNucleusEnhancer;
-import org.datanucleus.store.appengine.jpa.DatastoreEntityManagerFactory;
 import org.datanucleus.store.appengine.jpa.DatastorePersistenceProvider;
 import play.Logger;
 import play.Play;
@@ -31,7 +26,7 @@ import play.cache.Cache;
 import play.classloading.ApplicationClasses.ApplicationClass;
 import play.db.jpa.JPA;
 import play.db.jpa.JPAPlugin;
-import play.db.jpa.JPQLDialect;
+import play.db.jpa.JPASupport;
 import play.exceptions.UnexpectedException;
 import play.jobs.JobsPlugin;
 import play.libs.IO;
@@ -178,7 +173,16 @@ public class GAEPlugin extends PlayPlugin {
                     return Play.classloader;
                 }
             }, new HashMap());
-            JPQLDialect.instance = new DataNucleusDialect(); 
+        }
+
+        // Warn about use of JPASuuport
+        List<Class> support = Play.classloader.getAssignableClasses(JPASupport.class);
+        if(!support.isEmpty()) {
+            Logger.warn("");
+            Logger.warn("Your application is using the play JPASupport on Google App Engine");
+            Logger.warn("Note that it is not supported");
+            Logger.warn("Use either plain JPA (in the GAE way) or Siena as persistence engine");
+            Logger.warn("");
         }
 
         // Wrap the GAE cache
@@ -230,11 +234,6 @@ public class GAEPlugin extends PlayPlugin {
             dataNucleusEnhancer.addClass(applicationClass.name, applicationClass.enhancedByteCode);
             dataNucleusEnhancer.enhance();
             applicationClass.enhancedByteCode = dataNucleusEnhancer.getEnhancedBytes(applicationClass.name);
-            /*try {
-               IO.write(applicationClass.enhancedByteCode, new File("/Users/guillaume/Desktop/"+applicationClass.name+".class"));
-            } catch(IOException e) {
-                //
-            }*/
         } finally {
             Thread.currentThread().setContextClassLoader(pc);
         }

@@ -11,7 +11,7 @@ h2. <a>What is supported?</a>
 * Logging is correctly dispatched to java.util.logging when the module is enabled.
 * tmp folder is disabled because you can't write to the filesystem in GAE.
 * Direct datastore access is fully supported.
-* JPA support can be enabled but you still depends on GAE JPA limitations.
+* JPA support can be enabled but you still depends on GAE JPA limitations and you cannot extend play JPASupport.
 * Cache is correctly wrapped to the GAE memcached instance.
 * Mail is correctly wrapped to the GAE mail service.
 * Users services is available with a 'sign in' page simulation in the development server.
@@ -76,6 +76,8 @@ bc. # play war test-gae -o test-gae.war
 # appcfg.sh update test-gae.war
 
 Make sure to specify your GAE application id in the 'war/WEB-INF/appengine-web.xml' file.
+
+You should run **play precompile** before creating the war, to generate a local cache uploaded to appengine.
 
 h2. <a>About JPA</a>
 
