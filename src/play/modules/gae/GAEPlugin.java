@@ -47,10 +47,8 @@ public class GAEPlugin extends PlayPlugin {
             }
         }
         // Force to PROD mode when hosted on production GAE
-        if (ApiProxy.getCurrentEnvironment() != null && ApiProxy.getCurrentEnvironment().getClass().getName().indexOf("development") == -1) {
-            Play.mode = Play.Mode.PROD;
-            prodGAE = true;
-        }
+        Play.mode = Play.Mode.PROD;
+        prodGAE = true;
         // Create a fake development environment if not run in the Google SDK
         if (ApiProxy.getCurrentEnvironment() == null) {
             Logger.warn("");
@@ -75,7 +73,7 @@ public class GAEPlugin extends PlayPlugin {
                 if (!xml.exists()) {
                     IO.writeContent("<appengine-web-app xmlns=\"http://appengine.google.com/ns/1.0\">\n" +
                             "\t<application><!-- Replace this with your application id from http://appengine.google.com --></application>\n" +
-                            "\t<version>1</version>\n" +
+                            "\t<version>1</version>\n<precompilation-enabled>false</precompilation-enabled>\n" +
                             "</appengine-web-app>\n", xml);
                 }
                 if (IO.readContentAsString(xml).contains("<!-- Replace this with your application id from http://appengine.google.com -->")) {
