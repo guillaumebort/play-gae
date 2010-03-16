@@ -44,7 +44,7 @@ bc. # play run test-gae
 ~ |  __/|_|\____|\__ (_)
 ~ |_|            |__/   
 ~
-~ play! 1.0-stable5-localbuild, http://www.playframework.org
+~ play! 1.0.1 http://www.playframework.org
 ~
 ~ Ctrl+C to stop
 ~ 
@@ -69,15 +69,11 @@ Content of the **war** directory will be merged during the war export command. I
 
 h2. <a>Deployment</a>
 
-To deploy your application to Google's cloud, you need to export your application as war
-then upload it using the Google App Engine SDK:
+To deploy your application to Google's cloud, you can use the **gae:deploy** command. You need to specify the location of the GAE sdk using the **--gae** option:
 
-bc. # play war test-gae -o test-gae.war
-# appcfg.sh update test-gae.war
+bc. # play gae:deploy --gae ~/Desktop/appengine-sdk-1.3.1
 
 Make sure to specify your GAE application id in the 'war/WEB-INF/appengine-web.xml' file.
-
-You should run **play precompile** before creating the war, to generate a local cache uploaded to appengine.
 
 h2. <a>About JPA</a>
 

@@ -46,9 +46,6 @@ public class GAEPlugin extends PlayPlugin {
                 it.remove();
             }
         }
-        // Force to PROD mode when hosted on production GAE
-        Play.mode = Play.Mode.PROD;
-        prodGAE = true;
         // Create a fake development environment if not run in the Google SDK
         if (ApiProxy.getCurrentEnvironment() == null) {
             Logger.warn("");
@@ -83,6 +80,10 @@ public class GAEPlugin extends PlayPlugin {
                 Logger.error(e, "Cannot init GAE files");
             }
             Logger.warn("");
+        } else {
+            // Force to PROD mode when hosted on production GAE
+            Play.mode = Play.Mode.PROD;
+            prodGAE = true;
         }
     }
 
