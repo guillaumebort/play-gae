@@ -1,6 +1,9 @@
 package play.modules.gae;
 
-import com.google.appengine.tools.development.ApiProxyLocalImpl;
+import com.google.appengine.api.datastore.dev.LocalDatastoreService;
+import com.google.appengine.tools.development.ApiProxyLocal;
+import com.google.appengine.tools.development.ApiProxyLocalFactory;
+import com.google.appengine.tools.development.LocalServerEnvironment;
 import com.google.apphosting.api.ApiProxy;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -53,8 +56,28 @@ public class GAEPlugin extends PlayPlugin {
             Logger.warn("~~~~~~~~~~~~~~~~~~~~~~~");
             Logger.warn("No Google App Engine environment found. Setting up a development environement");
             devEnvironment = new PlayDevEnvironment();
-            ApiProxy.setDelegate(new ApiProxyLocalImpl(new File(Play.applicationPath, "war")) {
-            });
+
+            ApiProxyLocalFactory factory = new ApiProxyLocalFactory();
+            ApiProxyLocal proxy = factory.create(new LocalServerEnvironment() {
+                                        public void waitForServerToStart()
+                                                        throws InterruptedException {
+                                        }
+                                        public int getPort() {
+                                                return 0;
+                                        }
+                                        public File getAppDir() {
+                                                return new File(Play.applicationPath, "war");
+                                        }
+                                        public String getAddress() {
+                                                return null;
+                                        }
+                                });
+            proxy.setProperty(
+                          LocalDatastoreService.BACKING_STORE_PROPERTY,
+ //                       LocalDatastoreService.NO_STORAGE_PROPERTY,
+                          Boolean.TRUE.toString());
+            ApiProxy.setDelegate(proxy);
+
             ApiProxy.setEnvironmentForCurrentThread(new PlayDevEnvironment());
             System.setProperty("appengine.orm.disable.duplicate.emf.exception", "yes");
             File warExt = Play.getFile("war");
