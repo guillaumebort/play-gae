@@ -1,25 +1,6 @@
 package play.modules.gae;
 
-import com.google.appengine.api.datastore.dev.LocalDatastoreService;
-import com.google.appengine.tools.development.ApiProxyLocal;
-import com.google.appengine.tools.development.ApiProxyLocalFactory;
-import com.google.appengine.tools.development.LocalServerEnvironment;
 import com.google.apphosting.api.ApiProxy;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Properties;
-import javax.mail.Session;
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.spi.ClassTransformer;
-import javax.persistence.spi.PersistenceUnitInfo;
-import javax.persistence.spi.PersistenceUnitTransactionType;
-import javax.sql.DataSource;
 import org.datanucleus.enhancer.DataNucleusEnhancer;
 import org.datanucleus.store.appengine.jpa.DatastorePersistenceProvider;
 import play.Logger;
@@ -34,11 +15,23 @@ import play.exceptions.UnexpectedException;
 import play.jobs.JobsPlugin;
 import play.libs.IO;
 import play.libs.Mail;
-import play.mvc.Router; 
+import play.mvc.Router;
+
+import javax.mail.Session;
+import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.spi.ClassTransformer;
+import javax.persistence.spi.PersistenceUnitInfo;
+import javax.persistence.spi.PersistenceUnitTransactionType;
+import javax.sql.DataSource;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 public class GAEPlugin extends PlayPlugin {
 
-    public ApiProxy.Environment devEnvironment = null;
+    public PlayDevEnvironment devEnvironment = null;
     public boolean prodGAE;
 
     @Override
@@ -55,30 +48,7 @@ public class GAEPlugin extends PlayPlugin {
             Logger.warn("Google App Engine module");
             Logger.warn("~~~~~~~~~~~~~~~~~~~~~~~");
             Logger.warn("No Google App Engine environment found. Setting up a development environement");
-            devEnvironment = new PlayDevEnvironment();
-
-            ApiProxyLocalFactory factory = new ApiProxyLocalFactory();
-            ApiProxyLocal proxy = factory.create(new LocalServerEnvironment() {
-                                        public void waitForServerToStart()
-                                                        throws InterruptedException {
-                                        }
-                                        public int getPort() {
-                                                return 0;
-                                        }
-                                        public File getAppDir() {
-                                                return new File(Play.applicationPath, "war");
-                                        }
-                                        public String getAddress() {
-                                                return null;
-                                        }
-                                });
-            proxy.setProperty(
-                          LocalDatastoreService.BACKING_STORE_PROPERTY,
- //                       LocalDatastoreService.NO_STORAGE_PROPERTY,
-                          Boolean.TRUE.toString());
-            ApiProxy.setDelegate(proxy);
-
-            ApiProxy.setEnvironmentForCurrentThread(new PlayDevEnvironment());
+            devEnvironment = PlayDevEnvironment.create();
             System.setProperty("appengine.orm.disable.duplicate.emf.exception", "yes");
             File warExt = Play.getFile("war");
             if (!warExt.exists()) {
@@ -147,11 +117,11 @@ public class GAEPlugin extends PlayPlugin {
                 }
 
                 public List<String> getMappingFileNames() {
-                    return new ArrayList();
+                    return new ArrayList<String>();
                 }
 
                 public List<URL> getJarFileUrls() {
-                    return new ArrayList();
+                    return new ArrayList<URL>();
                 }
 
                 public URL getPersistenceUnitRootUrl() {
@@ -263,7 +233,7 @@ public class GAEPlugin extends PlayPlugin {
 
     @Override
     public void beforeInvocation() {
-        // Set the current developement environment if needed
+        // Set the current development environment if needed
         if (devEnvironment != null) {
             ApiProxy.setEnvironmentForCurrentThread(new PlayDevEnvironment());
         }
