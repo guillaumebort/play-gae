@@ -162,7 +162,10 @@ if PLAY10:
         print '~ Deploying'
         print '~ ---------'
 
-        os.system('%s/bin/appcfg.sh update %s' % (gae_path, war_path))
+        if os.name == 'nt':
+            os.system('%s/bin/appcfg.cmd update %s' % (gae_path, war_path))
+        else:
+            os.system('%s/bin/appcfg.sh update %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
