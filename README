@@ -1,1 +1,4 @@
-Should work with the Google App Engine SDK for Java 1.3.0
+Should work with the Google App Engine SDK for Java 1.3.x
+
+**tested with :**
+* Play 1.0.3.2 and Google App Engine SDK for Java 1.3.7
