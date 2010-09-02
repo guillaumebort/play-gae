@@ -9,3 +9,8 @@ dist
 nbproject
 appengine-generated
 precompiled
+samples-and-tests/lists-with-gae/.classpath
+samples-and-tests/lists-with-gae/.project
+samples-and-tests/lists-with-gae/.settings
+samples-and-tests/lists-with-gae/true
+
