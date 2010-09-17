@@ -1,8 +1,5 @@
 package play.modules.gae;
 
-import com.google.apphosting.api.ApiProxy;
-import org.datanucleus.enhancer.DataNucleusEnhancer;
-import org.datanucleus.store.appengine.jpa.DatastorePersistenceProvider;
 import play.Logger;
 import play.Play;
 import play.PlayPlugin;
@@ -18,16 +15,12 @@ import play.libs.Mail;
 import play.mvc.Router;
 
 import javax.mail.Session;
-import javax.persistence.Entity;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.spi.ClassTransformer;
-import javax.persistence.spi.PersistenceUnitInfo;
-import javax.persistence.spi.PersistenceUnitTransactionType;
-import javax.sql.DataSource;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+
+import com.google.apphosting.api.ApiProxy;
 
 public class GAEPlugin extends PlayPlugin {
 
@@ -38,7 +31,8 @@ public class GAEPlugin extends PlayPlugin {
     public void onLoad() {
         // Remove Jobs from plugin list
         for (ListIterator<PlayPlugin> it = Play.plugins.listIterator(); it.hasNext();) {
-            if (it.next() instanceof JobsPlugin) {
+            PlayPlugin p = it.next();
+            if (p instanceof JobsPlugin || p instanceof play.libs.WS) {
                 it.remove();
             }
         }
@@ -89,94 +83,6 @@ public class GAEPlugin extends PlayPlugin {
 
     @Override
     public void onApplicationStart() {
-        // It's time to set up JPA
-        final List<Class> classes = Play.classloader.getAnnotatedClasses(Entity.class);
-        if (!classes.isEmpty()) {
-            // Hack the JPA plugin
-            JPAPlugin.autoTxs = false;
-            JPA.entityManagerFactory = new DatastorePersistenceProvider().createContainerEntityManagerFactory(new PersistenceUnitInfo() {
-
-                public String getPersistenceUnitName() {
-                    return "default";
-                }
-
-                public String getPersistenceProviderClassName() {
-                    return DatastorePersistenceProvider.class.getName();
-                }
-
-                public PersistenceUnitTransactionType getTransactionType() {
-                    return PersistenceUnitTransactionType.RESOURCE_LOCAL;
-                }
-
-                public DataSource getJtaDataSource() {
-                    return null;
-                }
-
-                public DataSource getNonJtaDataSource() {
-                    return null;
-                }
-
-                public List<String> getMappingFileNames() {
-                    return new ArrayList<String>();
-                }
-
-                public List<URL> getJarFileUrls() {
-                    return new ArrayList<URL>();
-                }
-
-                public URL getPersistenceUnitRootUrl() {
-                    try {
-                        return Play.applicationPath.toURL();
-                    } catch (MalformedURLException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-
-                public List<String> getManagedClassNames() {
-                    List<String> classNames = new ArrayList<String>();
-                    for(Class c : classes) {
-                        classNames.add(c.getName());
-                    }
-                    return classNames;
-                }
-
-                public boolean excludeUnlistedClasses() {
-                    return false;
-                }
-
-                public Properties getProperties() {
-                    Properties properties = new Properties();
-                    properties.setProperty("datanucleus.NontransactionalRead", "true");
-                    properties.setProperty("datanucleus.NontransactionalWrite", "true");
-                    properties.setProperty("datanucleus.ConnectionURL", "appengine");
-                    properties.setProperty("datanucleus.classLoaderResolverName", "playApplicationLoader");
-                    return properties;
-                }
-
-                public ClassLoader getClassLoader() {
-                    return Play.classloader;
-                }
-
-                public void addTransformer(ClassTransformer c) {
-                    //
-                }
-
-                public ClassLoader getNewTempClassLoader() {
-                    return Play.classloader;
-                }
-            }, new HashMap());
-        }
-
-        // Warn about use of JPASuuport
-        List<Class> support = Play.classloader.getAssignableClasses(JPASupport.class);
-        if(!support.isEmpty()) {
-            Logger.warn("");
-            Logger.warn("Your application is using the play JPASupport on Google App Engine");
-            Logger.warn("Note that it is not supported");
-            Logger.warn("Use either plain JPA (in the GAE way) or Siena as persistence engine");
-            Logger.warn("");
-        }
-
         // Wrap the GAE cache
         if (devEnvironment == null) {
             Cache.forcedCacheImpl = new GAECache(); 
@@ -187,50 +93,6 @@ public class GAEPlugin extends PlayPlugin {
         Mail.asynchronousSend = false;
     }
     
-    @Override
-    public void enhance(ApplicationClass applicationClass) {
-        ClassLoader tempCl = new ClassLoader() {
-
-            @Override
-            /**
-             * Temporarely define this class, just for need of enhancing
-             */
-            public Class<?> loadClass(String name) throws ClassNotFoundException {
-                Class c = findLoadedClass(name);
-                if (c != null) {
-                    return c;
-                }
-                ApplicationClass tempClass = Play.classes.getApplicationClass(name);
-                if (tempClass != null) {
-                    return defineClass(tempClass.name, tempClass.javaByteCode, 0, tempClass.javaByteCode.length, Play.classloader.protectionDomain);
-                }
-                return GAEPlugin.class.getClassLoader().loadClass(name);
-            }
-        };
-        try {
-            if (!tempCl.loadClass(applicationClass.name).isAnnotationPresent(Entity.class) && !tempCl.loadClass(applicationClass.name).isAnnotationPresent(MappedSuperclass.class)) {
-                return;
-            }
-        } catch (Exception e) {
-            throw new UnexpectedException(e);
-        }
-
-        DataNucleusEnhancer dataNucleusEnhancer = new DataNucleusEnhancer("JDO", "ASM");
-        dataNucleusEnhancer.setVerbose(true);
-        dataNucleusEnhancer.setClassLoader(tempCl);
-        ClassLoader pc = Thread.currentThread().getContextClassLoader();
-        try {
-            // Well it seems that in any case, Datanucleus first rely on the context classLoader
-            Thread.currentThread().setContextClassLoader(tempCl);
-            dataNucleusEnhancer.getMetaDataManager().loadClasses(new String[]{applicationClass.name}, tempCl);
-            dataNucleusEnhancer.addClass(applicationClass.name, applicationClass.enhancedByteCode);
-            dataNucleusEnhancer.enhance();
-            applicationClass.enhancedByteCode = dataNucleusEnhancer.getEnhancedBytes(applicationClass.name);
-        } finally {
-            Thread.currentThread().setContextClassLoader(pc);
-        }
-    }
-
     @Override
     public void beforeInvocation() {
         // Set the current development environment if needed

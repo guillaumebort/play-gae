@@ -23,8 +23,7 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
         ApiProxyLocal proxy = factory.create(instance);
         proxy.setProperty(
                 LocalDatastoreService.BACKING_STORE_PROPERTY,
-                // LocalDatastoreService.NO_STORAGE_PROPERTY,
-                Boolean.TRUE.toString());
+                Play.getFile("tmp/datastore").getAbsolutePath());
         ApiProxy.setDelegate(proxy);
         return instance;
     }
