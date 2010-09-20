@@ -4,11 +4,6 @@ import play.Logger;
 import play.Play;
 import play.PlayPlugin;
 import play.cache.Cache;
-import play.classloading.ApplicationClasses.ApplicationClass;
-import play.db.jpa.JPA;
-import play.db.jpa.JPAPlugin;
-import play.db.jpa.JPASupport;
-import play.exceptions.UnexpectedException;
 import play.jobs.JobsPlugin;
 import play.libs.IO;
 import play.libs.Mail;
@@ -16,8 +11,6 @@ import play.mvc.Router;
 
 import javax.mail.Session;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 import com.google.apphosting.api.ApiProxy;
