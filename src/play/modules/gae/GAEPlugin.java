@@ -32,7 +32,7 @@ public class GAEPlugin extends PlayPlugin {
         // Remove Jobs from plugin list
         for (ListIterator<PlayPlugin> it = Play.plugins.listIterator(); it.hasNext();) {
             PlayPlugin p = it.next();
-            if (p instanceof JobsPlugin || p instanceof play.libs.WS) {
+            if (p instanceof JobsPlugin) {
                 it.remove();
             }
         }
@@ -107,6 +107,7 @@ public class GAEPlugin extends PlayPlugin {
             Play.configuration.remove("smtp.mock");
             Play.configuration.setProperty("application.log", "DEBUG");
         }
+        Play.configuration.setProperty("webservice", "urlfetch");
         Play.configuration.setProperty("upload.threshold", Integer.MAX_VALUE + "");
     }
 }
