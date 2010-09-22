@@ -54,8 +54,8 @@ public class GAECache implements CacheImpl {
     }
 
     public Map<String, Object> get(String[] keys) {
-        List list = Arrays.asList(keys);
-        Map map = memcacheService.getAll(list);
+        List<String> list = Arrays.asList(keys);
+        Map<String, Object> map = memcacheService.getAll(list);
         Map<String,Object> result = new HashMap<String,Object>();
         for(Object key : map.entrySet()) {
             result.put(key.toString(), unwrap(map.get(key)));
