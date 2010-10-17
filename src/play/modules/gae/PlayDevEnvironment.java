@@ -71,7 +71,7 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
     }
 
     public int getPort() {
-        return Server.port;
+        return Server.httpPort;
     }
 
     public File getAppDir() {

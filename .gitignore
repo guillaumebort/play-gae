@@ -6,6 +6,7 @@ logs
 eclipse
 *.~*
 dist
+*.pyc
 nbproject
 appengine-generated
 precompiled
