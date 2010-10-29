@@ -38,7 +38,8 @@
        $('.checker').change(function() {
            var done = $(this).parents('ul').is("#todo");
            var li = $(this).parent();
-           $.post('@{Lists.changeItemState(list.id, "000000")}'.replace('000000', li.attr('rel')), {done: done}, function() {
+		   var action = #{jsAction @Lists.changeItemState(list.id, ':itemId') /}
+           $.post(action({itemId: li.attr('rel')}), {done: done}, function() {
                if(done) {
                    $('#done').prepend(li);
                    $(li).effect('highlight')
@@ -51,7 +52,8 @@
        $('.deleter').live('click', function(e) {
            var l = $(this);
            e.preventDefault();
-           $.post('@{Lists.deleteItem(list.id, "000000")}'.replace('000000', $(this).parent().parent().attr('rel')), function() {
+		   var action = #{jsAction @Lists.deleteItem(list.id, ':itemId') /}
+           $.post(action({itemId: $(this).parent().parent().attr('rel')}), function() {
               l.parent().parent('li').effect('drop');
            });
        });
