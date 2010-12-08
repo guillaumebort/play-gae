@@ -47,7 +47,7 @@ def execute(**kargs):
     # check
     if not os.path.exists(os.path.join(gae_path, 'bin/appcfg.sh')):
         print "~ %s seems not to be a valid GAE installation (checked for bin/appcfg.sh)" % gae_path
-        print "~ This module has been tested with GAE 1.3.7"
+        print "~ This module has been tested with GAE 1.4.0"
         print "~ "
         sys.exit(-1)
         
@@ -68,7 +68,13 @@ def execute(**kargs):
         shutil.rmtree(os.path.join(app.path, 'precompiled'))
     java_cmd.insert(2, '-Dprecompile=yes')
     try:
-        subprocess.call(java_cmd, env=os.environ)
+        result = subprocess.call(java_cmd, env=os.environ)
+        if not result == 0:
+            print "~"
+            print "~ Precompilation has failed, stop deploying."
+            print "~"
+            sys.exit(-1)
+        
     except OSError:
         print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
         sys.exit(-1)
