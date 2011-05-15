@@ -6,14 +6,13 @@ import com.google.appengine.tools.development.ApiProxyLocalFactory;
 import com.google.appengine.tools.development.LocalServerEnvironment;
 import com.google.apphosting.api.ApiProxy;
 import com.google.apphosting.api.ApiProxy.Environment;
+import play.Play;
+import play.mvc.Scope.Session;
+import play.server.Server;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-
-import play.Play;
-import play.mvc.Scope.Session;
-import play.server.Server;
 
 public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
 
@@ -70,7 +69,11 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
     public void waitForServerToStart() throws InterruptedException {
     }
 
-    public int getPort() {
+	public boolean enforceApiDeadlines() {
+		return false;
+	}
+
+	public int getPort() {
         return Server.httpPort;
     }
 
