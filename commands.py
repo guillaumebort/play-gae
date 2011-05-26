@@ -15,7 +15,11 @@ except ImportError:
 
 MODULE = "gae"
 
-COMMANDS = ["gae:deploy"]
+COMMANDS = ["gae:deploy", "gae:request_logs"]
+HELP = {
+    'gae:deploy': "Deploy to Google App Engine",
+	'gae:request_logs': "Download logs from Google App Engine",
+}
 
 def execute(**kargs):
     command = kargs.get("command")
@@ -24,6 +28,7 @@ def execute(**kargs):
     env = kargs.get("env")
 
     gae_path = None
+
     try:
         optlist, args2 = getopt.getopt(args, '', ['gae='])
         for o, a in optlist:
@@ -89,16 +94,31 @@ def execute(**kargs):
     war_path = os.path.join(tempfile.gettempdir(), '%s.war' % os.path.basename(app.path))
     package_as_war(app, env, war_path, None)
 
-    print '~'
-    print '~ Deploying'
-    print '~ ---------'
+    if command == "gae:deploy":
+		print '~'
+		print '~ Deploying'
+		print '~ ---------'
 
-    if os.name == 'nt':
-        os.system('%s/bin/appcfg.cmd update %s' % (gae_path, war_path))
-    else:
-        os.system('%s/bin/appcfg.sh update %s' % (gae_path, war_path))
+		if os.name == 'nt':
+			os.system('%s/bin/appcfg.cmd update %s' % (gae_path, war_path))
+		else:
+			os.system('%s/bin/appcfg.sh update %s' % (gae_path, war_path))
 
-    print "~ "
-    print "~ Done!"
-    print "~ "
-    sys.exit(-1)
+		print "~ "
+		print "~ Done!"
+		print "~ "
+		sys.exit(-1)
+    if command == "gae:request_logs":
+		print '~'
+		print '~ Downloading Logs'
+		print '~ ---------'
+
+		if os.name == 'nt':
+			os.system('%s/bin/appcfg.cmd request_logs %s ./logs/production.log' % (gae_path, war_path))
+		else:
+			os.system('%s/bin/appcfg.sh request_logs %s ./logs/production.log' % (gae_path, war_path))
+
+		print "~ "
+		print "~ Done!"
+		print "~ "
+		sys.exit(-1)
