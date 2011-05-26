@@ -71,7 +71,7 @@ h2. <a>Deployment</a>
 
 To deploy your application to Google's cloud, you can use the **gae:deploy** command. You need to specify the location of the GAE sdk using the **--gae** option:
 
-bc. # play gae:deploy --gae=/Users/guillaume/Desktop/appengine-sdk-1.4.0
+bc. # play gae:deploy --gae=/Users/guillaume/Desktop/appengine-sdk-1.5.0
 
 Make sure to specify your GAE application id in the 'war/WEB-INF/appengine-web.xml' file.
 

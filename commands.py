@@ -47,7 +47,7 @@ def execute(**kargs):
     # check
     if not os.path.exists(os.path.join(gae_path, 'bin/appcfg.sh')):
         print "~ %s seems not to be a valid GAE installation (checked for bin/appcfg.sh)" % gae_path
-        print "~ This module has been tested with GAE 1.4.0"
+        print "~ This module has been tested with GAE 1.5.0"
         print "~ "
         sys.exit(-1)
         
