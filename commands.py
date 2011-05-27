@@ -18,7 +18,13 @@ MODULE = "gae"
 COMMANDS = ["gae:deploy", "gae:request_logs"]
 HELP = {
     'gae:deploy': "Deploy to Google App Engine",
-	'gae:request_logs': "Download logs from Google App Engine",
+    'gae:update_indexes': "Updating Indexes",
+    'gae:vacuum_indexes': "Deleting Unused Indexes",
+    'gae:update_queues': "Managing Task Queues",
+    'gae:update_dos': "Managing DoS Protection",
+    'gae:update_cron': "Managing Scheduled Tasks : upload cron job specifications",
+    'gae:cron_info': "Managing Scheduled Tasks : verify your cron configuration",
+    'gae:request_logs': "Download logs from Google App Engine",
 }
 
 def execute(**kargs):
@@ -108,6 +114,20 @@ def execute(**kargs):
 		print "~ Done!"
 		print "~ "
 		sys.exit(-1)
+    if command == "gae:update_indexes":
+		print '~'
+                print '~ Updating indexes'
+                print '~ ---------'
+
+                if os.name == 'nt':
+                        os.system('%s/bin/appcfg.cmd update_indexes %s' % (gae_path, war_path))
+                else:
+                        os.system('%s/bin/appcfg.sh update_indexes %s' % (gae_path, war_path))
+
+                print "~ "
+                print "~ Done!"
+                print "~ "
+                sys.exit(-1)
     if command == "gae:request_logs":
 		print '~'
 		print '~ Downloading Logs'
