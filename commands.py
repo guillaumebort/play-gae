@@ -15,7 +15,7 @@ except ImportError:
 
 MODULE = "gae"
 
-COMMANDS = ["gae:deploy", "gae:request_logs"]
+COMMANDS = ["gae:deploy", "gae:update_indexes", "gae:vacuum_indexes", "gae:update_queues", "gae:update_dos", "gae:update_cron", "gae:cron_info", "gae:request_logs"]
 HELP = {
     'gae:deploy': "Deploy to Google App Engine",
     'gae:update_indexes': "Updating Indexes",
@@ -118,18 +118,74 @@ def execute(**kargs):
 		sys.exit(-1)
     if command == "gae:update_indexes":
 		print '~'
-                print '~ Updating indexes'
-                print '~ ---------'
+		print '~ Updating indexes'
+		print '~ ---------'
 
-                if os.name == 'nt':
-                        os.system('%s/bin/appcfg.cmd update_indexes %s' % (gae_path, war_path))
-                else:
-                        os.system('%s/bin/appcfg.sh update_indexes %s' % (gae_path, war_path))
+		if os.name == 'nt':
+				os.system('%s/bin/appcfg.cmd update_indexes %s' % (gae_path, war_path))
+		else:
+				os.system('%s/bin/appcfg.sh update_indexes %s' % (gae_path, war_path))
 
-                print "~ "
-                print "~ Done!"
-                print "~ "
-                sys.exit(-1)
+		print "~ "
+		print "~ Done!"
+		print "~ "
+		sys.exit(-1)
+    if command == "gae:vacuum_indexes":
+		print '~'
+		print '~ Deleting Unused Indexes'
+		print '~ ---------'
+
+		if os.name == 'nt':
+				os.system('%s/bin/appcfg.cmd vacuum_indexes %s' % (gae_path, war_path))
+		else:
+				os.system('%s/bin/appcfg.sh vacuum_indexes %s' % (gae_path, war_path))
+
+		print "~ "
+		print "~ Done!"
+		print "~ "
+		sys.exit(-1)
+    if command == "gae:update_queues":
+		print '~'
+		print '~ Updating Task Queues'
+		print '~ ---------'
+
+		if os.name == 'nt':
+				os.system('%s/bin/appcfg.cmd update_queues %s' % (gae_path, war_path))
+		else:
+				os.system('%s/bin/appcfg.sh update_queues %s' % (gae_path, war_path))
+
+		print "~ "
+		print "~ Done!"
+		print "~ "
+		sys.exit(-1)
+    if command == "gae:update_dos":
+		print '~'
+		print '~ Updating DoS Protection'
+		print '~ ---------'
+
+		if os.name == 'nt':
+				os.system('%s/bin/appcfg.cmd update_dos %s' % (gae_path, war_path))
+		else:
+				os.system('%s/bin/appcfg.sh update_dos %s' % (gae_path, war_path))
+
+		print "~ "
+		print "~ Done!"
+		print "~ "
+		sys.exit(-1)
+    if command == "gae:update_cron":
+		print '~'
+		print '~ Updating cron job specifications'
+		print '~ ---------'
+
+		if os.name == 'nt':
+				os.system('%s/bin/appcfg.cmd update_cron %s' % (gae_path, war_path))
+		else:
+				os.system('%s/bin/appcfg.sh update_cron %s' % (gae_path, war_path))
+
+		print "~ "
+		print "~ Done!"
+		print "~ "
+		sys.exit(-1)
     if command == "gae:request_logs":
 		print '~'
 		print '~ Downloading Logs'
