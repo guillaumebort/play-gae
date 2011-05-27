@@ -34,6 +34,7 @@ def execute(**kargs):
     env = kargs.get("env")
 
     gae_path = None
+    war_path = os.path.join(tempfile.gettempdir(), '%s.war' % os.path.basename(app.path))
 
     try:
         optlist, args2 = getopt.getopt(args, '', ['gae='])
@@ -66,41 +67,42 @@ def execute(**kargs):
          if a.find('--gae') == 0:
              args.remove(a)
 
-    print '~'
-    print '~ Compiling'
-    print '~ ---------'
-
-    remaining_args = []
-    app.check()
-    java_cmd = app.java_cmd(args)
-    if os.path.exists(os.path.join(app.path, 'tmp')):
-        shutil.rmtree(os.path.join(app.path, 'tmp'))
-    if os.path.exists(os.path.join(app.path, 'precompiled')):
-        shutil.rmtree(os.path.join(app.path, 'precompiled'))
-    java_cmd.insert(2, '-Dprecompile=yes')
-    try:
-        result = subprocess.call(java_cmd, env=os.environ)
-        if not result == 0:
-            print "~"
-            print "~ Precompilation has failed, stop deploying."
-            print "~"
-            sys.exit(-1)
-        
-    except OSError:
-        print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
-        sys.exit(-1)
-
-    if os.path.exists(os.path.join(app.path, 'tmp')):
-        shutil.rmtree(os.path.join(app.path, 'tmp'))
-
-    print '~'
-    print '~ Packaging'
-    print '~ ---------'
-
-    war_path = os.path.join(tempfile.gettempdir(), '%s.war' % os.path.basename(app.path))
-    package_as_war(app, env, war_path, None)
-
     if command == "gae:deploy":
+		print '~'
+		print '~ Compiling'
+		print '~ ---------'
+
+		remaining_args = []
+		app.check()
+		java_cmd = app.java_cmd(args)
+		if os.path.exists(os.path.join(app.path, 'tmp')):
+		    shutil.rmtree(os.path.join(app.path, 'tmp'))
+		if os.path.exists(os.path.join(app.path, 'precompiled')):
+		    shutil.rmtree(os.path.join(app.path, 'precompiled'))
+		java_cmd.insert(2, '-Dprecompile=yes')
+		try:
+		    result = subprocess.call(java_cmd, env=os.environ)
+		    if not result == 0:
+		        print "~"
+		        print "~ Precompilation has failed, stop deploying."
+		        print "~"
+		        sys.exit(-1)
+		    
+		except OSError:
+		    print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
+		    sys.exit(-1)
+
+		if os.path.exists(os.path.join(app.path, 'tmp')):
+		    shutil.rmtree(os.path.join(app.path, 'tmp'))
+
+		print '~'
+		print '~ Packaging'
+		print '~ ---------'
+
+
+		package_as_war(app, env, war_path, None)
+
+    
 		print '~'
 		print '~ Deploying'
 		print '~ ---------'
