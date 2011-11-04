@@ -223,8 +223,8 @@ def execute(**kargs):
 		print '~ Packaging'
 		print '~ ---------'
 
-
 		package_as_gae_war(app, env, war_path, None)
+		copy_directory(os.path.join(app.path, 'public'), os.path.join(war_path, 'public'))
 
     
 		print '~'
