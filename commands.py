@@ -7,6 +7,7 @@ import subprocess
 
 try:
     from play.utils import package_as_war
+    from play.utils import copy_directory
     PLAY10 = False
 except ImportError:
     PLAY10 = True
@@ -88,6 +89,7 @@ def execute(**kargs):
 
     war_path = os.path.join(tempfile.gettempdir(), '%s.war' % os.path.basename(app.path))
     package_as_war(app, env, war_path, None)
+    copy_directory(os.path.join(app.path, 'public'), os.path.join(war_path, 'public'))
 
     print '~'
     print '~ Deploying'
