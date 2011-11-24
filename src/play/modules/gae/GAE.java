@@ -61,7 +61,7 @@ public class GAE {
      *            the action where the user will be redirected after the login
      */
     public static void login(String returnAction) {
-        login(Request.current().action, null);
+        login(returnAction, null);
     }
 
     /**
