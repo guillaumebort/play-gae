@@ -55,6 +55,7 @@ public class GAEPlugin extends PlayPlugin {
                     IO.writeContent("<appengine-web-app xmlns=\"http://appengine.google.com/ns/1.0\">\n" +
                             "\t<application><!-- Replace this with your application id from http://appengine.google.com --></application>\n" +
                             "\t<version>1</version>\n" +
+                            "\t<threadsafe>true</threadsafe>\n" +
                             "</appengine-web-app>\n", xml);
                 }
                 if (IO.readContentAsString(xml).contains("<!-- Replace this with your application id from http://appengine.google.com -->")) {
