@@ -1,8 +1,11 @@
 h1. Google App Engine support
 
+bq. *NEW v1.6.0: GoogleAppEngine SDK 1.6.0 support*
+
 The GAE module enables Google App Engine support for your application. It wraps commons GAE services in play basic services whenever possible (Logging, Mail, Cache...) and expose directly other Google specifics services (User services, Datastore...)
 
 Moreover, this module sets up a GAE development environment directly in the play development server, so you don't need to develop directly in the Google App Engine SDK (but it's supported too).
+
 
 h2. <a>What is supported?</a>
 
@@ -17,6 +20,7 @@ h2. <a>What is supported?</a>
 * Users services is available with a 'sign in' page simulation in the development server.
 * You can still break out your application into several modules.
 * PROD mode is forced when the application is running on the GAE production environment.
+
 
 h2. <a>Setting up the GAE module</a>
 
@@ -71,7 +75,7 @@ h2. <a>Deployment</a>
 
 To deploy your application to Google's cloud, you can use the **gae:deploy** command. You need to specify the location of the GAE sdk using the **--gae** option:
 
-bc. # play gae:deploy --gae=/Users/guillaume/Desktop/appengine-sdk-1.5.0
+bc. # play gae:deploy --gae=/Users/guillaume/Desktop/appengine-sdk-1.6.0
 
 Make sure to specify your GAE application id in the 'war/WEB-INF/appengine-web.xml' file.
 
@@ -95,4 +99,4 @@ h2. <a>Sample application</a>
 
 You can take a look at the **samples-and-tests/lists-with-gae** as a sample of a real Google App Engine application.
 
-p(note). **This app is available online** at "http://play-lists.appspot.com":http://play-lists.appspot.com.
+p(note). **This app is available online** at "http://mandubian-play-gae.appspot.com":http://mandubian-play-gae.appspot.com.
