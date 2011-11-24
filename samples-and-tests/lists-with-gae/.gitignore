@@ -1,3 +1,5 @@
+lib
+modules
 .classpath
 .project
 eclipse
@@ -6,3 +8,4 @@ target
 .target
 .cache
 cache
+
