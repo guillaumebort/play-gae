@@ -23,12 +23,16 @@ public class GAEPlugin extends PlayPlugin {
     @Override
     public void onLoad() {
         // Remove Jobs from plugin list
-        for (ListIterator<PlayPlugin> it = Play.plugins.listIterator(); it.hasNext();) {
+        /* 
+         * OLD WAY TO DISABLE PLUGINS 
+         for (ListIterator<PlayPlugin> it = Play.plugins.listIterator(); it.hasNext();) {
             PlayPlugin p = it.next();
             if (p instanceof JobsPlugin) {
                 it.remove();
             }
-        }
+        }*/
+    	Play.pluginCollection.disablePlugin(play.jobs.JobsPlugin.class);
+    	
         // Create a fake development environment if not run in the Google SDK
         if (ApiProxy.getCurrentEnvironment() == null) {
             Logger.warn("");
