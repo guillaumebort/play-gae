@@ -130,7 +130,7 @@ public class GAE {
      *            the action where the user will be redirected after the login
      */
     public static void login(String returnAction) {
-        login(returnAction, null);
+        login(returnAction, null, null, null);
     }
 
     /**
