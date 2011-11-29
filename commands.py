@@ -86,12 +86,14 @@ def package_as_gae_war(app, env, war_path, war_zip_path, war_exclusion_list = No
     os.mkdir(os.path.join(war_path, 'WEB-INF/lib'))
     for jar in classpath:
 	# SPECIFIC GAE : excludes from the libs all provided and postgres/mysql/jdbc libs
-	# keeps appengine-api & appengine-api-labs
+	# keeps appengine-api only
+	# appengine-api-labs removed
 	gae_excluded = [ 
 			'provided-', 'postgres', 'mysql', 'jdbc', 
 			'appengine-agent',  'appengine-agentimpl',
 			'appengine-agentruntime', 'appengine-api-stubs', 
-			'appengine-local-runtime', 'appengine-testing'
+			'appengine-local-runtime', 'appengine-testing',
+			'appengine-api-labs'
 	]
         if jar.endswith('.jar'):
 		if find(lambda excl: excl in jar, gae_excluded): 
