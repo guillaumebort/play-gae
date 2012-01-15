@@ -1,4 +1,3 @@
-Should work with the Google App Engine SDK for Java >=1.6.0
+Create play application for the Google App Engine platform.
 
-**tested with :**
-* Play 1.2.3 and Google App Engine SDK for Java5/6
+More information on: http://www.playframework.org/modules/gae
