@@ -1,6 +1,6 @@
 h1. Google App Engine support
 
-bq. *NEW v1.6.0: GoogleAppEngine SDK 1.6.0 support*
+bq. *NEW v1.6.1.1: GoogleAppEngine SDK 1.6.1.1 support*
 
 The GAE module enables Google App Engine support for your application. It wraps commons GAE services in play basic services whenever possible (Logging, Mail, Cache...) and expose directly other Google specifics services (User services, Datastore...)
 
@@ -28,27 +28,23 @@ Start to create a new application in the classical way.
 
 bc. # play new test-gae
 
-Then edit the **conf/application.conf** file to enable the GAE module:
+Then edit the **conf/dependencies.yml** file to enable the GAE module:
 
-bc. # Additional modules
-# ~~~~~
-# A module is another play! application. Add a line for each module you want
-# to add to your application. Module paths are either absolutes or relative to
-# the application root.
-#
-module.gae=${play.path}/modules/gae
+bc. # Application dependencies
+require:
+    - play
+    - play -> gae 1.6.1.1
 
 Now you can start your application, and play will start a GAE development environment:
 
 bc. # play run test-gae
- 
 ~        _            _ 
 ~  _ __ | | __ _ _  _| |
 ~ | '_ \| |/ _' | || |_|
 ~ |  __/|_|\____|\__ (_)
 ~ |_|            |__/   
 ~
-~ play! 1.1 http://www.playframework.org
+~ play! 1.2.4 http://www.playframework.org
 ~
 ~ Ctrl+C to stop
 ~ 
@@ -75,7 +71,7 @@ h2. <a>Deployment</a>
 
 To deploy your application to Google's cloud, you can use the **gae:deploy** command. You need to specify the location of the GAE sdk using the **--gae** option:
 
-bc. # play gae:deploy --gae=/Users/guillaume/Desktop/appengine-sdk-1.6.0
+bc. # play gae:deploy
 
 Make sure to specify your GAE application id in the 'war/WEB-INF/appengine-web.xml' file.
 
