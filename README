@@ -1,8 +1,3 @@
 Play! framework plugin that allows for the deployment of any Play! application to Google App Engine.
 
-<<<<<<< HEAD
-**tested with :**
-* Play 1.2.4 and Google App Engine SDK for Java5/6
-=======
 More information on: http://www.playframework.org/modules/gae
->>>>>>> c77911894a63cd2bbfb7e8f7e77d2dcecebbe375
