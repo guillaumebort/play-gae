@@ -1,8 +1,8 @@
 # Application dependencies
 
 require:
-    - play [1.2.3,)
-    - play -> gae 1.6.0_b2
+    - play [1.2.4,)
+    - play -> [gae 1.6.0,)
     - play -> siena [2.0.6,)
 
     
