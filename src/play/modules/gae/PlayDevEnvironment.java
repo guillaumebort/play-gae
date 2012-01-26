@@ -1,20 +1,20 @@
 package play.modules.gae;
 
-import com.google.appengine.api.datastore.dev.LocalDatastoreService;
 import com.google.appengine.tools.development.ApiProxyLocal;
 import com.google.appengine.tools.development.ApiProxyLocalFactory;
 import com.google.appengine.tools.development.LocalServerEnvironment;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.google.apphosting.api.ApiProxy;
 import com.google.apphosting.api.ApiProxy.Environment;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import play.Play;
 import play.mvc.Http;
 import play.mvc.Scope.Session;
 import play.server.Server;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
 
@@ -22,9 +22,18 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
         PlayDevEnvironment instance = new PlayDevEnvironment();
         ApiProxyLocalFactory factory = new ApiProxyLocalFactory();
         ApiProxyLocal proxy = factory.create(instance);
-        proxy.setProperty(
-                LocalDatastoreService.BACKING_STORE_PROPERTY,
-                Play.getFile("tmp/datastore").getAbsolutePath());
+
+		// Save datastore file in tmp/
+		LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
+		datastoreConfig.setBackingStoreLocation("tmp/datastore");
+		datastoreConfig.setUp();
+
+		// Use local implementation for deferred queues
+		LocalTaskQueueTestConfig taskQueueConfig = new LocalTaskQueueTestConfig();
+		taskQueueConfig.setDisableAutoTaskExecution(false);
+		taskQueueConfig.setCallbackClass(LocalTaskQueueTestConfig.DeferredTaskCallback.class);
+		taskQueueConfig.setUp();
+
         ApiProxy.setDelegate(proxy);
         return instance;
     }
@@ -97,13 +106,11 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
 
 	@Override
 	public boolean enforceApiDeadlines() {
-		// TODO Auto-generated method stub
 		return false;
 	}
     
 	@Override
 	public boolean simulateProductionLatencies() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
