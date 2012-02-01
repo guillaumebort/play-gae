@@ -22,6 +22,7 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
         PlayDevEnvironment instance = new PlayDevEnvironment();
         ApiProxyLocalFactory factory = new ApiProxyLocalFactory();
         ApiProxyLocal proxy = factory.create(instance);
+		ApiProxy.setDelegate(proxy);
 
 		// Save datastore file in tmp/
 		LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
@@ -34,7 +35,6 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
 		taskQueueConfig.setCallbackClass(LocalTaskQueueTestConfig.DeferredTaskCallback.class);
 		taskQueueConfig.setUp();
 
-        ApiProxy.setDelegate(proxy);
         return instance;
     }
 
