@@ -27,7 +27,7 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
 		// Save datastore file in tmp/
 		LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
 		datastoreConfig.setNoStorage(false);
-		datastoreConfig.setBackingStoreLocation("tmp/datastore");
+		datastoreConfig.setBackingStoreLocation(Play.applicationPath + "/tmp/datastore");
 		datastoreConfig.setUp();
 
 		// Use local implementation for deferred queues
