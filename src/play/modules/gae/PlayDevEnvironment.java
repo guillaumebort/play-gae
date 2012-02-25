@@ -22,9 +22,15 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
         PlayDevEnvironment instance = new PlayDevEnvironment();
         ApiProxyLocalFactory factory = new ApiProxyLocalFactory();
         ApiProxyLocal proxy = factory.create(instance);
+        //config datastore api
         proxy.setProperty(
                 LocalDatastoreService.BACKING_STORE_PROPERTY,
                 Play.getFile("tmp/datastore").getAbsolutePath());
+	    boolean enableHRD = Boolean.parseBoolean(Play.configuration.getProperty("gae.datastore.enableHRD", "false"));
+	    if(enableHRD){
+	    	String unappliedJobPct = Play.configuration.getProperty("gae.datastore.hrd.unappliedJobPct","50");
+	    	proxy.setProperty("datastore.default_high_rep_job_policy_unapplied_job_pct", unappliedJobPct);
+	    }
         ApiProxy.setDelegate(proxy);
         return instance;
     }
