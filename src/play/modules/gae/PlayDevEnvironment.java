@@ -1,20 +1,20 @@
 package play.modules.gae;
 
-import com.google.appengine.api.datastore.dev.LocalDatastoreService;
 import com.google.appengine.tools.development.ApiProxyLocal;
 import com.google.appengine.tools.development.ApiProxyLocalFactory;
 import com.google.appengine.tools.development.LocalServerEnvironment;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.google.apphosting.api.ApiProxy;
 import com.google.apphosting.api.ApiProxy.Environment;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
 import play.Play;
 import play.mvc.Http;
 import play.mvc.Scope.Session;
 import play.server.Server;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
 
@@ -22,10 +22,21 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
         PlayDevEnvironment instance = new PlayDevEnvironment();
         ApiProxyLocalFactory factory = new ApiProxyLocalFactory();
         ApiProxyLocal proxy = factory.create(instance);
-        proxy.setProperty(
-                LocalDatastoreService.BACKING_STORE_PROPERTY,
-                Play.getFile("tmp/datastore").getAbsolutePath());
-        ApiProxy.setDelegate(proxy);
+		ApiProxy.setDelegate(proxy);
+
+		// Save datastore file in tmp/
+		LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
+		datastoreConfig.setNoStorage(false);
+		datastoreConfig.setBackingStoreLocation(Play.applicationPath + "/tmp/datastore");
+		datastoreConfig.setUp();
+
+		// Use local implementation for deferred queues
+		LocalTaskQueueTestConfig taskQueueConfig = new LocalTaskQueueTestConfig();
+		taskQueueConfig.setDisableAutoTaskExecution(false);
+		taskQueueConfig.setShouldCopyApiProxyEnvironment(true);
+		taskQueueConfig.setCallbackClass(LocalTaskQueueTestConfig.DeferredTaskCallback.class);
+		taskQueueConfig.setUp();
+
         return instance;
     }
 
@@ -41,21 +52,25 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
 
     @Override
     public String getEmail() {
-        return Session.current().get("__GAE_EMAIL");
+        if(Session.current() != null) {
+            return Session.current().get("__GAE_EMAIL");
+        } else {
+            return "no-session@gmail.com";
+        }
     }
 
     @Override
     public boolean isLoggedIn() {
-        return Session.current().contains("__GAE_EMAIL");
+        return Session.current() != null && Session.current().contains("__GAE_EMAIL");
     }
 
     @Override
     public boolean isAdmin() {
-        return Session.current().contains("__GAE_ISADMIN") && Session.current().get("__GAE_ISADMIN").equals("true");
+        return Session.current() != null && Session.current().contains("__GAE_ISADMIN") && Session.current().get("__GAE_ISADMIN").equals("true");
     }
 
     @Override
-   public String getAuthDomain() {
+    public String getAuthDomain() {
         return "gmail.com";
     }
 
@@ -97,13 +112,11 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
 
 	@Override
 	public boolean enforceApiDeadlines() {
-		// TODO Auto-generated method stub
 		return false;
 	}
     
 	@Override
 	public boolean simulateProductionLatencies() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
