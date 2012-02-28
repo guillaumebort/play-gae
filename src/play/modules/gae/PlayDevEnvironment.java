@@ -1,5 +1,6 @@
 package play.modules.gae;
 
+import com.google.appengine.api.datastore.dev.DefaultHighRepJobPolicy;
 import com.google.appengine.api.datastore.dev.LocalDatastoreService;
 import com.google.appengine.tools.development.ApiProxyLocal;
 import com.google.appengine.tools.development.ApiProxyLocalFactory;
@@ -26,10 +27,10 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
         proxy.setProperty(
                 LocalDatastoreService.BACKING_STORE_PROPERTY,
                 Play.getFile("tmp/datastore").getAbsolutePath());
-	    boolean enableHRD = Boolean.parseBoolean(Play.configuration.getProperty("gae.datastore.enableHRD", "false"));
-	    if(enableHRD){
+	    boolean enableMasterSlave = Boolean.parseBoolean(Play.configuration.getProperty("gae.datastore.enableMasterSlave", "false"));
+	    if(!enableMasterSlave){ //activate HRD
 	    	String unappliedJobPct = Play.configuration.getProperty("gae.datastore.hrd.unappliedJobPct","50");
-	    	proxy.setProperty("datastore.default_high_rep_job_policy_unapplied_job_pct", unappliedJobPct);
+	    	proxy.setProperty(DefaultHighRepJobPolicy.UNAPPLIED_JOB_PERCENTAGE_PROPERTY, unappliedJobPct);
 	    }
         ApiProxy.setDelegate(proxy);
         return instance;
