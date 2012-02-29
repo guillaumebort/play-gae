@@ -4,10 +4,10 @@
 
     <path id="project.classpath">
         <pathelement path="${play.path}/framework/classes"/>
-        <fileset dir="C:/play-1.2.4/framework">
+        <fileset dir="${play.path}/framework">
             <include name="*.jar"/>
         </fileset>
-        <fileset dir="C:/play-1.2.4/framework/lib">
+        <fileset dir="${play.path}/framework/lib">
             <include name="*.jar"/>                        
         </fileset>
         <fileset dir="lib">
