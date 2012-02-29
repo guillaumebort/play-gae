@@ -1,19 +1,17 @@
 package play.modules.gae;
 
+import com.google.apphosting.api.ApiProxy;
 import play.Logger;
 import play.Play;
 import play.PlayPlugin;
 import play.cache.Cache;
-import play.jobs.JobsPlugin;
 import play.libs.IO;
 import play.libs.Mail;
 import play.mvc.Router;
 
 import javax.mail.Session;
 import java.io.File;
-import java.util.*;
-
-import com.google.apphosting.api.ApiProxy;
+import java.util.Properties;
 
 public class GAEPlugin extends PlayPlugin {
 
@@ -23,14 +21,6 @@ public class GAEPlugin extends PlayPlugin {
     @Override
     public void onLoad() {
         // Remove Jobs from plugin list
-        /* 
-         * OLD WAY TO DISABLE PLUGINS 
-         for (ListIterator<PlayPlugin> it = Play.plugins.listIterator(); it.hasNext();) {
-            PlayPlugin p = it.next();
-            if (p instanceof JobsPlugin) {
-                it.remove();
-            }
-        }*/
     	Play.pluginCollection.disablePlugin(play.jobs.JobsPlugin.class);
     	
         // Create a fake development environment if not run in the Google SDK
