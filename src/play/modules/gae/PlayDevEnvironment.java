@@ -22,21 +22,26 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
         PlayDevEnvironment instance = new PlayDevEnvironment();
         ApiProxyLocalFactory factory = new ApiProxyLocalFactory();
         ApiProxyLocal proxy = factory.create(instance);
-		ApiProxy.setDelegate(proxy);
-
-		// Save datastore file in tmp/
+        ApiProxy.setDelegate(proxy);
+        
+        //Config datastore api. Save datastore file in tmp/
 		LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
 		datastoreConfig.setNoStorage(false);
 		datastoreConfig.setBackingStoreLocation(Play.applicationPath + "/tmp/datastore");
+		boolean enableMasterSlave = Boolean.parseBoolean(Play.configuration.getProperty("gae.datastore.enableMasterSlave", "false"));
+	    if(!enableMasterSlave){ //activate HRD
+	    	float unappliedJobPct = Float.parseFloat(Play.configuration.getProperty("gae.datastore.hrd.unappliedJobPct","50"));
+	    	datastoreConfig.setDefaultHighRepJobPolicyUnappliedJobPercentage(unappliedJobPct);
+	    }
 		datastoreConfig.setUp();
-
-		// Use local implementation for deferred queues
+	    
+	    // Use local implementation for deferred queues
 		LocalTaskQueueTestConfig taskQueueConfig = new LocalTaskQueueTestConfig();
 		taskQueueConfig.setDisableAutoTaskExecution(false);
 		taskQueueConfig.setShouldCopyApiProxyEnvironment(true);
 		taskQueueConfig.setCallbackClass(LocalTaskQueueTestConfig.DeferredTaskCallback.class);
 		taskQueueConfig.setUp();
-
+        
         return instance;
     }
 
