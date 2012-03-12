@@ -68,6 +68,8 @@ public class GAEPlugin extends PlayPlugin {
         Router.addRoute("POST", "/_ah/login", "GAEActions.doLogin");
         Router.addRoute("GET", "/_ah/logout", "GAEActions.logout");
         Router.addRoute("GET", "/_ah/start", "GAEActions.startBackend");
+        if(Play.mode == Play.Mode.DEV)
+        	Router.addRoute("GET", "/_ah/admin", "GAEActions.adminConsole");
     }
 
     @Override
