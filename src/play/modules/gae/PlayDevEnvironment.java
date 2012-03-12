@@ -24,7 +24,13 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
         ApiProxyLocal proxy = factory.create(instance);
 		ApiProxy.setDelegate(proxy);
 
-		// Save datastore file in tmp/
+		proxy.setProperty(
+            LocalDatastoreService.BACKING_STORE_PROPERTY,
+            Play.getFile("tmp/datastore").getAbsolutePath());
+
+        /* Commented this because using test configs poses problems in DEV mode
+
+        // Save datastore file in tmp/
 		LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
 		datastoreConfig.setNoStorage(false);
 		datastoreConfig.setBackingStoreLocation(Play.applicationPath + "/tmp/datastore");
@@ -36,6 +42,8 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
 		taskQueueConfig.setShouldCopyApiProxyEnvironment(true);
 		taskQueueConfig.setCallbackClass(LocalTaskQueueTestConfig.DeferredTaskCallback.class);
 		taskQueueConfig.setUp();
+        */
+
 
         return instance;
     }
