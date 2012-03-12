@@ -23,4 +23,8 @@ public class GAEActions extends Controller {
         redirect(url);
     }
 
+    public static void startBackend() {
+        ok();
+    }
+
 }

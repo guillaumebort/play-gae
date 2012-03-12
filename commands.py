@@ -15,7 +15,9 @@ except ImportError:
 
 MODULE = "gae"
 
-COMMANDS = ["gae:deploy", "gae:package", "gae:update_indexes", "gae:vacuum_indexes", "gae:update_queues", "gae:update_dos", "gae:update_cron", "gae:cron_info", "gae:request_logs", "gae:rollback"]
+COMMANDS = ["gae:deploy", "gae:package", "gae:update_indexes", "gae:vacuum_indexes", "gae:update_queues", 
+            "gae:update_dos", "gae:update_cron", "gae:cron_info", "gae:request_logs", "gae:rollback", 
+            "gae:update_backend", "gae:backend_info"]
 HELP = {
     'gae:deploy': "Deploy to Google App Engine",
     'gae:update_indexes': "Updating Indexes",
@@ -25,7 +27,9 @@ HELP = {
     'gae:update_cron': "Managing Scheduled Tasks : upload cron job specifications",
     'gae:cron_info': "Managing Scheduled Tasks : verify your cron configuration",
     'gae:request_logs': "Download logs from Google App Engine",
-    'gae:rollback': "Rollback last (failed) deployment"
+    'gae:rollback': "Rollback last (failed) deployment",
+    'gae:update_backend': "Managing Backend Instances : update your backend configuration",
+    'gae:backend_info': "Managing Backend Instances : verify your backend configuration"
 }
 
 
@@ -371,3 +375,28 @@ def execute(**kargs):
         print "~ Done!"
         print "~ "
         sys.exit(-1)
+    if command == "gae:update_backend":
+        print '~'
+        print '~ Updating backend specifications'
+        print '~ ---------'
+
+        if os.name == 'nt':
+                os.system('%s/bin/appcfg.cmd backends update %s' % (gae_path, war_path))
+        else:
+                os.system('%s/bin/appcfg.sh backends update %s' % (gae_path, war_path))
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(-1)
+    if command == "gae:backend_info":
+        print '~'
+        print '~ Listing backend specifications'
+        print '~ ---------'
+        if os.name == 'nt':
+                os.system('%s/bin/appcfg.cmd backends list %s' % (gae_path, war_path))
+        else:
+                os.system('%s/bin/appcfg.sh backends list %s' % (gae_path, war_path))
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(-1)    
