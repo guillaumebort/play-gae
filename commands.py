@@ -239,7 +239,7 @@ def execute(**kargs):
 		print "~ "
 		print "~ Done!"
 		print "~ "
-		sys.exit(-1)
+		sys.exit(0)
     if command == "gae:package":
 		print '~'
 		print '~ Compiling'
@@ -276,7 +276,7 @@ def execute(**kargs):
 		print "~ "
 		print "~ Done!"
 		print "~ "
-		sys.exit(-1)
+		sys.exit(0)
     if command == "gae:update_indexes":
 		print '~'
 		print '~ Updating indexes'
@@ -290,7 +290,7 @@ def execute(**kargs):
 		print "~ "
 		print "~ Done!"
 		print "~ "
-		sys.exit(-1)
+		sys.exit(0)
     if command == "gae:vacuum_indexes":
 		print '~'
 		print '~ Deleting Unused Indexes'
@@ -304,7 +304,7 @@ def execute(**kargs):
 		print "~ "
 		print "~ Done!"
 		print "~ "
-		sys.exit(-1)
+		sys.exit(0)
     if command == "gae:update_queues":
 		print '~'
 		print '~ Updating Task Queues'
@@ -318,7 +318,7 @@ def execute(**kargs):
 		print "~ "
 		print "~ Done!"
 		print "~ "
-		sys.exit(-1)
+		sys.exit(0)
     if command == "gae:update_dos":
 		print '~'
 		print '~ Updating DoS Protection'
@@ -332,7 +332,7 @@ def execute(**kargs):
 		print "~ "
 		print "~ Done!"
 		print "~ "
-		sys.exit(-1)
+		sys.exit(0)
     if command == "gae:update_cron":
 		print '~'
 		print '~ Updating cron job specifications'
@@ -346,7 +346,7 @@ def execute(**kargs):
 		print "~ "
 		print "~ Done!"
 		print "~ "
-		sys.exit(-1)
+		sys.exit(0)
     if command == "gae:request_logs":
 		print '~'
 		print '~ Downloading Logs'
@@ -360,7 +360,7 @@ def execute(**kargs):
 		print "~ "
 		print "~ Done!"
 		print "~ "
-		sys.exit(-1)
+		sys.exit(0)
     if command == "gae:rollback":
         print '~'
         print '~ Performing rollback'
@@ -374,7 +374,7 @@ def execute(**kargs):
         print "~ "
         print "~ Done!"
         print "~ "
-        sys.exit(-1)
+        sys.exit(0)
     if command == "gae:update_backend":
         print '~'
         print '~ Updating backend specifications'
@@ -387,7 +387,7 @@ def execute(**kargs):
         print "~ "
         print "~ Done!"
         print "~ "
-        sys.exit(-1)
+        sys.exit(0)
     if command == "gae:backend_info":
         print '~'
         print '~ Listing backend specifications'
@@ -399,4 +399,4 @@ def execute(**kargs):
         print "~ "
         print "~ Done!"
         print "~ "
-        sys.exit(-1)    
+        sys.exit(0)
