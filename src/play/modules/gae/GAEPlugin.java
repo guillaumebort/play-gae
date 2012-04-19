@@ -76,7 +76,8 @@ public class GAEPlugin extends PlayPlugin {
     public void onApplicationStart() {
         // Wrap the GAE cache
         if (devEnvironment == null) {
-            Cache.forcedCacheImpl = new GAECache(); 
+            Cache.forcedCacheImpl = new GAECache();
+            Cache.init();
         }
 
         // Provide the correct JavaMail session
