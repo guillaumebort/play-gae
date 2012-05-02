@@ -6,12 +6,7 @@ import shutil
 import subprocess
 
 try:
-<<<<<<< HEAD
-    from play.utils import package_as_war
-    from play.utils import copy_directory
-=======
     from play.utils import isParentOf, copy_directory, replaceAll
->>>>>>> upstream/master
     PLAY10 = False
 except ImportError:
     PLAY10 = True
@@ -113,7 +108,7 @@ def package_as_gae_war(app, env, war_path, war_zip_path, war_exclusion_list = No
     if os.path.exists(os.path.join(war_path, 'WEB-INF/framework')): shutil.rmtree(os.path.join(war_path, 'WEB-INF/framework'))
     os.mkdir(os.path.join(war_path, 'WEB-INF/framework'))
     copy_directory(os.path.join(env["basedir"], 'framework/templates'), os.path.join(war_path, 'WEB-INF/framework/templates'))
-
+    copy_directory(os.path.join(app.path, 'public'), os.path.join(war_path, 'public'))
     # modules
     for module in modules:
         to = os.path.join(war_path, 'WEB-INF/application/modules/%s' % os.path.basename(module))
@@ -227,14 +222,7 @@ def execute(**kargs):
 		print '~'
 		print '~ Packaging'
 		print '~ ---------'
-
-<<<<<<< HEAD
-    war_path = os.path.join(tempfile.gettempdir(), '%s.war' % os.path.basename(app.path))
-    package_as_war(app, env, war_path, None)
-    copy_directory(os.path.join(app.path, 'public'), os.path.join(war_path, 'public'))
-=======
->>>>>>> upstream/master
-
+		
 		package_as_gae_war(app, env, war_path, None)
 
     
