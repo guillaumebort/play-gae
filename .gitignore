@@ -15,3 +15,11 @@ samples-and-tests/lists-with-gae/.project
 samples-and-tests/lists-with-gae/.settings
 samples-and-tests/lists-with-gae/true
 
+
+/.classpath
+/.project
+/.settings
+/.idea
+*.iml
+
+play-framework

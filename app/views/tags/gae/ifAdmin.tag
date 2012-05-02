@@ -1,4 +1,6 @@
 %{ 
+  if(play.modules.gae.GAE.userService.userLoggedIn) {
+
     if(play.modules.gae.GAE.userService.userAdmin) { 
         play.templates.TagContext.parent().data.put("_executeNextElse", false);
 %}
@@ -7,4 +9,5 @@
     } else {
         play.templates.TagContext.parent().data.put("_executeNextElse", true);
     }
+  }
 }%

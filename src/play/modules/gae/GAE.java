@@ -1,8 +1,10 @@
 package play.modules.gae;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import play.mvc.Http.Request;
 import play.mvc.Router;
@@ -31,16 +33,65 @@ public class GAE {
     }
 
     /**
-     * Authenticate the user against the App Engine and redirect to the given
-     * action and parameters if the login is successful
-     * 
      * @param returnAction
      *            the action where the user will be redirected after the login
      * @param returnParams
      *            the action parameters
+     * @param federatedIdentity
+     *            federated identity string which is to be asserted for users
+     *            who are authenticated using a non-Google ID (e.g., OpenID). In
+     *            order to use federated logins this feature must be enabled for
+     *            the application. Otherwise, this should be null.
      */
-    public static void login(String returnAction,
-            Map<String, Object> returnParams) {
+    public static void login(String returnAction, Map<String, Object> returnParams, String federatedIdentity) {
+        login(returnAction, returnParams, federatedIdentity, new HashSet());
+    }
+
+    /**
+     * @param returnAction
+     *            the action where the user will be redirected after the login
+     * @param federatedIdentity
+     *            federated identity string which is to be asserted for users
+     *            who are authenticated using a non-Google ID (e.g., OpenID). In
+     *            order to use federated logins this feature must be enabled for
+     *            the application. Otherwise, this should be null.
+     */
+    public static void login(String returnAction, String federatedIdentity) {
+        login(returnAction, null, federatedIdentity, new HashSet());
+    }
+
+    /**
+     * @param returnAction
+     *            the action where the user will be redirected after the login
+     * @param federatedIdentity
+     *            federated identity string which is to be asserted for users
+     *            who are authenticated using a non-Google ID (e.g., OpenID). In
+     *            order to use federated logins this feature must be enabled for
+     *            the application. Otherwise, this should be null.
+     * @param attributesRequest
+     *            additional attributions requested for this login, IDP may not
+     *            may not support these attributes
+     */
+    public static void login(String returnAction, String federatedIdentity, Set<String> attributesRequest) {
+        login(returnAction, null, federatedIdentity, attributesRequest);
+    }
+
+    /**
+     * @param returnAction
+     *            the action where the user will be redirected after the login
+     * @param returnParams
+     *            the action parameters
+     * @param federatedIdentity
+     *            federated identity string which is to be asserted for users
+     *            who are authenticated using a non-Google ID (e.g., OpenID). In
+     *            order to use federated logins this feature must be enabled for
+     *            the application. Otherwise, this should be null.
+     * @param attributesRequest
+     *            additional attributions requested for this login, IDP may not
+     *            may not support these attributes
+     */
+    public static void login(String returnAction, Map<String, Object> returnParams, String federatedIdentity,
+            Set<String> attributesRequest) {
 
         if (returnAction == null || returnAction.isEmpty())
             throw new IllegalArgumentException("Empty action");
@@ -49,8 +100,26 @@ public class GAE {
             returnParams = new HashMap<String, Object>();
 
         String returnURL = Router.getFullUrl(returnAction, returnParams);
-        String url = getUserService().createLoginURL(returnURL);
+        String url = null;
+        if (federatedIdentity != null) {
+            url = getUserService().createLoginURL(returnURL, null, federatedIdentity, attributesRequest);
+        } else {
+            url = getUserService().createLoginURL(returnURL);
+        }
         throw new Redirect(url);
+    }
+
+    /**
+     * Authenticate the user against the App Engine and redirect to the given
+     * action and parameters if the login is successful
+     * 
+     * @param returnAction
+     *            the action where the user will be redirected after the login
+     * @param returnParams
+     *            the action parameters
+     */
+    public static void login(String returnAction, Map<String, Object> returnParams) {
+        login(returnAction, returnParams, null, null);
     }
 
     /**
@@ -61,7 +130,7 @@ public class GAE {
      *            the action where the user will be redirected after the login
      */
     public static void login(String returnAction) {
-        login(Request.current().action, null);
+        login(returnAction, null, null, null);
     }
 
     /**

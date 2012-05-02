@@ -1,19 +1,17 @@
 package play.modules.gae;
 
+import com.google.apphosting.api.ApiProxy;
 import play.Logger;
 import play.Play;
 import play.PlayPlugin;
 import play.cache.Cache;
-import play.jobs.JobsPlugin;
 import play.libs.IO;
 import play.libs.Mail;
 import play.mvc.Router;
 
 import javax.mail.Session;
 import java.io.File;
-import java.util.*;
-
-import com.google.apphosting.api.ApiProxy;
+import java.util.Properties;
 
 public class GAEPlugin extends PlayPlugin {
 
@@ -23,12 +21,8 @@ public class GAEPlugin extends PlayPlugin {
     @Override
     public void onLoad() {
         // Remove Jobs from plugin list
-        for (ListIterator<PlayPlugin> it = Play.plugins.listIterator(); it.hasNext();) {
-            PlayPlugin p = it.next();
-            if (p instanceof JobsPlugin) {
-                it.remove();
-            }
-        }
+    	Play.pluginCollection.disablePlugin(play.jobs.JobsPlugin.class);
+    	
         // Create a fake development environment if not run in the Google SDK
         if (ApiProxy.getCurrentEnvironment() == null) {
             Logger.warn("");
@@ -51,6 +45,7 @@ public class GAEPlugin extends PlayPlugin {
                     IO.writeContent("<appengine-web-app xmlns=\"http://appengine.google.com/ns/1.0\">\n" +
                             "\t<application><!-- Replace this with your application id from http://appengine.google.com --></application>\n" +
                             "\t<version>1</version>\n" +
+                            "\t<threadsafe>true</threadsafe>\n" +
                             "</appengine-web-app>\n", xml);
                 }
                 if (IO.readContentAsString(xml).contains("<!-- Replace this with your application id from http://appengine.google.com -->")) {
@@ -72,6 +67,9 @@ public class GAEPlugin extends PlayPlugin {
         Router.addRoute("GET", "/_ah/login", "GAEActions.login");
         Router.addRoute("POST", "/_ah/login", "GAEActions.doLogin");
         Router.addRoute("GET", "/_ah/logout", "GAEActions.logout");
+        Router.addRoute("GET", "/_ah/start", "GAEActions.startBackend");
+        if(Play.mode == Play.Mode.DEV)
+        	Router.addRoute("GET", "/_ah/admin", "GAEActions.adminConsole");
     }
 
     @Override
