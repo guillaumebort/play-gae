@@ -223,10 +223,10 @@ def execute(**kargs):
 		print '~ Packaging'
 		print '~ ---------'
 
+		package_as_gae_war(app, env, war_path, None, ['submodules'])
 
-		package_as_gae_war(app, env, war_path, None)
 
-    
+
 		print '~'
 		print '~ Deploying'
 		print '~ ---------'
@@ -272,7 +272,7 @@ def execute(**kargs):
 		print '~ Packaging'
 		print '~ ---------'
 
-		package_as_gae_war(app, env, war_path, None)
+		package_as_gae_war(app, env, war_path, None, ['submodules'])
 		print "~ "
 		print "~ Done!"
 		print "~ "
