@@ -353,9 +353,9 @@ def execute(**kargs):
 		print '~ ---------'
 
 		if os.name == 'nt':
-			os.system('%s/bin/appcfg.cmd request_logs %s ./logs/production.log' % (gae_path, war_path))
+			os.system('%s/bin/appcfg.cmd %s request_logs %s ./logs/production.log' % (gae_path, ' '.join(args2), war_path))
 		else:
-			os.system('%s/bin/appcfg.sh request_logs %s ./logs/production.log' % (gae_path, war_path))
+			os.system('%s/bin/appcfg.sh %s request_logs %s ./logs/production.log' % (gae_path, ' '.join(args2), war_path))
 
 		print "~ "
 		print "~ Done!"
