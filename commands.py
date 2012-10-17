@@ -222,8 +222,7 @@ def execute(**kargs):
 		print '~'
 		print '~ Packaging'
 		print '~ ---------'
-
-
+		
 		package_as_gae_war(app, env, war_path, None)
 
     
