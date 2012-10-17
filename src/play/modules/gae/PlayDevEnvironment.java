@@ -3,9 +3,9 @@ package play.modules.gae;
 import com.google.appengine.tools.development.ApiProxyLocal;
 import com.google.appengine.tools.development.ApiProxyLocalFactory;
 import com.google.appengine.tools.development.LocalServerEnvironment;
-//import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-//import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
-import com.google.appengine.api.datastore.dev.LocalDatastoreService;
+import com.google.appengine.tools.development.testing.LocalChannelServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.google.apphosting.api.ApiProxy;
 import com.google.apphosting.api.ApiProxy.Environment;
 import play.Play;
@@ -25,28 +25,18 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
         ApiProxyLocal proxy = factory.create(instance);
 		ApiProxy.setDelegate(proxy);
 
-		proxy.setProperty(
-            LocalDatastoreService.BACKING_STORE_PROPERTY,
-            Play.getFile("tmp/datastore").getAbsolutePath());
+      //Config datastore api. Save datastore file in tmp/
+      LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
+      datastoreConfig.setNoStorage(false);
+      datastoreConfig.setBackingStoreLocation(Play.applicationPath + "/tmp/datastore");
+      boolean enableMasterSlave = Boolean.parseBoolean(Play.configuration.getProperty("gae.datastore.enableMasterSlave", "false"));
+      if (!enableMasterSlave) { //activate HRD
+        float unappliedJobPct = Float.parseFloat(Play.configuration.getProperty("gae.datastore.hrd.unappliedJobPct", "1"));
+        datastoreConfig.setDefaultHighRepJobPolicyUnappliedJobPercentage(unappliedJobPct);
+      }
+      datastoreConfig.setUp();
 
-        /* Commented this because using test configs poses problems in DEV mode
-
-        // Save datastore file in tmp/
-		LocalDatastoreServiceTestConfig datastoreConfig = new LocalDatastoreServiceTestConfig();
-		datastoreConfig.setNoStorage(false);
-		datastoreConfig.setBackingStoreLocation(Play.applicationPath + "/tmp/datastore");
-		datastoreConfig.setUp();
-
-		// Use local implementation for deferred queues
-		LocalTaskQueueTestConfig taskQueueConfig = new LocalTaskQueueTestConfig();
-		taskQueueConfig.setDisableAutoTaskExecution(false);
-		taskQueueConfig.setShouldCopyApiProxyEnvironment(true);
-		taskQueueConfig.setCallbackClass(LocalTaskQueueTestConfig.DeferredTaskCallback.class);
-		taskQueueConfig.setUp();
-        */
-
-
-        return instance;
+      return instance;
     }
 
     @Override
