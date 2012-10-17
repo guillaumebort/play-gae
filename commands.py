@@ -108,7 +108,7 @@ def package_as_gae_war(app, env, war_path, war_zip_path, war_exclusion_list = No
     if os.path.exists(os.path.join(war_path, 'WEB-INF/framework')): shutil.rmtree(os.path.join(war_path, 'WEB-INF/framework'))
     os.mkdir(os.path.join(war_path, 'WEB-INF/framework'))
     copy_directory(os.path.join(env["basedir"], 'framework/templates'), os.path.join(war_path, 'WEB-INF/framework/templates'))
-
+    copy_directory(os.path.join(app.path, 'public'), os.path.join(war_path, 'public'))
     # modules
     for module in modules:
         to = os.path.join(war_path, 'WEB-INF/application/modules/%s' % os.path.basename(module))
@@ -222,8 +222,7 @@ def execute(**kargs):
 		print '~'
 		print '~ Packaging'
 		print '~ ---------'
-
-
+		
 		package_as_gae_war(app, env, war_path, None)
 
     
