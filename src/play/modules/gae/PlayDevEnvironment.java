@@ -151,6 +151,9 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
         }
     }
 
-
+    @Override
+    public long getRemainingMillis() {
+        return 60000;
+    }
 }
 
