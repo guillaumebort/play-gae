@@ -97,8 +97,7 @@ def package_as_gae_war(app, env, war_path, war_zip_path, war_exclusion_list = No
 			'provided-', 'postgres', 'mysql', 'jdbc', 
 			'appengine-agent',  'appengine-agentimpl',
 			'appengine-agentruntime', 'appengine-api-stubs', 
-			'appengine-local-runtime', 'appengine-testing',
-			'appengine-api-labs'
+			'appengine-local-runtime', 'appengine-testing'
 	]
         if jar.endswith('.jar'):
 		if find(lambda excl: excl in jar, gae_excluded): 
