@@ -101,10 +101,10 @@ def package_as_gae_war(app, env, war_path, war_zip_path, war_exclusion_list = No
                         'appengine-api-labs'
         ]
         if jar.endswith('.jar'):
-                if find(lambda excl: excl in jar, gae_excluded): 
-                        print "~ Excluding JAR %s ..." % jar
-                else:
-                    shutil.copyfile(jar, os.path.join(war_path, 'WEB-INF/lib/%s' % os.path.split(jar)[1]))
+            if find(lambda excl: excl in jar, gae_excluded): 
+                print "~ Excluding JAR %s ..." % jar
+            else:
+                shutil.copyfile(jar, os.path.join(war_path, 'WEB-INF/lib/%s' % os.path.split(jar)[1]))
     if os.path.exists(os.path.join(war_path, 'WEB-INF/framework')): shutil.rmtree(os.path.join(war_path, 'WEB-INF/framework'))
     os.mkdir(os.path.join(war_path, 'WEB-INF/framework'))
     copy_directory(os.path.join(env["basedir"], 'framework/templates'), os.path.join(war_path, 'WEB-INF/framework/templates'))
@@ -192,175 +192,175 @@ def execute(**kargs):
              args.remove(a)
 
     if command == "gae:deploy":
-                print '~'
-                print '~ Compiling'
-                print '~ ---------'
+        print '~'
+        print '~ Compiling'
+        print '~ ---------'
 
-                remaining_args = []
-                app.check()
-                java_cmd = app.java_cmd(args)
-                if os.path.exists(os.path.join(app.path, 'tmp')):
-                    shutil.rmtree(os.path.join(app.path, 'tmp'))
-                if os.path.exists(os.path.join(app.path, 'precompiled')):
-                    shutil.rmtree(os.path.join(app.path, 'precompiled'))
-                java_cmd.insert(2, '-Dprecompile=yes')
-                try:
-                    result = subprocess.call(java_cmd, env=os.environ)
-                    if not result == 0:
-                        print "~"
-                        print "~ Precompilation has failed, stop deploying."
-                        print "~"
-                        sys.exit(-1)
-                    
-                except OSError:
-                    print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
-                    sys.exit(-1)
+        remaining_args = []
+        app.check()
+        java_cmd = app.java_cmd(args)
+        if os.path.exists(os.path.join(app.path, 'tmp')):
+            shutil.rmtree(os.path.join(app.path, 'tmp'))
+        if os.path.exists(os.path.join(app.path, 'precompiled')):
+            shutil.rmtree(os.path.join(app.path, 'precompiled'))
+        java_cmd.insert(2, '-Dprecompile=yes')
+        try:
+            result = subprocess.call(java_cmd, env=os.environ)
+            if not result == 0:
+                print "~"
+                print "~ Precompilation has failed, stop deploying."
+                print "~"
+                sys.exit(-1)
+            
+        except OSError:
+            print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
+            sys.exit(-1)
 
-                if os.path.exists(os.path.join(app.path, 'tmp')):
-                    shutil.rmtree(os.path.join(app.path, 'tmp'))
+        if os.path.exists(os.path.join(app.path, 'tmp')):
+            shutil.rmtree(os.path.join(app.path, 'tmp'))
 
-                print '~'
-                print '~ Packaging'
-                print '~ ---------'
+        print '~'
+        print '~ Packaging'
+        print '~ ---------'
 
-                package_as_gae_war(app, env, war_path, None, ['submodules'])
+        package_as_gae_war(app, env, war_path, None, ['submodules'])
 
 
 
-                print '~'
-                print '~ Deploying'
-                print '~ ---------'
+        print '~'
+        print '~ Deploying'
+        print '~ ---------'
 
-                if os.name == 'nt':
-                        os.system('%s/bin/appcfg.cmd update %s' % (gae_path, war_path))
-                else:
-                        os.system('%s/bin/appcfg.sh update %s' % (gae_path, war_path))
+        if os.name == 'nt':
+                os.system('%s/bin/appcfg.cmd update %s' % (gae_path, war_path))
+        else:
+                os.system('%s/bin/appcfg.sh update %s' % (gae_path, war_path))
 
-                print "~ "
-                print "~ Done!"
-                print "~ "
-                sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:package":
-                print '~'
-                print '~ Compiling'
-                print '~ ---------'
+        print '~'
+        print '~ Compiling'
+        print '~ ---------'
 
-                remaining_args = []
-                app.check()
-                java_cmd = app.java_cmd(args)
-                if os.path.exists(os.path.join(app.path, 'tmp')):
-                    shutil.rmtree(os.path.join(app.path, 'tmp'))
-                if os.path.exists(os.path.join(app.path, 'precompiled')):
-                    shutil.rmtree(os.path.join(app.path, 'precompiled'))
-                java_cmd.insert(2, '-Dprecompile=yes')
-                try:
-                    result = subprocess.call(java_cmd, env=os.environ)
-                    if not result == 0:
-                        print "~"
-                        print "~ Precompilation has failed, stop deploying."
-                        print "~"
-                        sys.exit(-1)
-                    
-                except OSError:
-                    print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
-                    sys.exit(-1)
+        remaining_args = []
+        app.check()
+        java_cmd = app.java_cmd(args)
+        if os.path.exists(os.path.join(app.path, 'tmp')):
+            shutil.rmtree(os.path.join(app.path, 'tmp'))
+        if os.path.exists(os.path.join(app.path, 'precompiled')):
+            shutil.rmtree(os.path.join(app.path, 'precompiled'))
+        java_cmd.insert(2, '-Dprecompile=yes')
+        try:
+            result = subprocess.call(java_cmd, env=os.environ)
+            if not result == 0:
+                print "~"
+                print "~ Precompilation has failed, stop deploying."
+                print "~"
+                sys.exit(-1)
+            
+        except OSError:
+            print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
+            sys.exit(-1)
 
-                if os.path.exists(os.path.join(app.path, 'tmp')):
-                    shutil.rmtree(os.path.join(app.path, 'tmp'))
+        if os.path.exists(os.path.join(app.path, 'tmp')):
+            shutil.rmtree(os.path.join(app.path, 'tmp'))
 
-                print '~'
-                print '~ Packaging'
-                print '~ ---------'
+        print '~'
+        print '~ Packaging'
+        print '~ ---------'
 
-                package_as_gae_war(app, env, war_path, None, ['submodules'])
-                print "~ "
-                print "~ Done!"
-                print "~ "
-                sys.exit(0)
+        package_as_gae_war(app, env, war_path, None, ['submodules'])
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:update_indexes":
-                print '~'
-                print '~ Updating indexes'
-                print '~ ---------'
+        print '~'
+        print '~ Updating indexes'
+        print '~ ---------'
 
-                if os.name == 'nt':
-                                os.system('%s/bin/appcfg.cmd update_indexes %s' % (gae_path, war_path))
-                else:
-                                os.system('%s/bin/appcfg.sh update_indexes %s' % (gae_path, war_path))
+        if os.name == 'nt':
+            os.system('%s/bin/appcfg.cmd update_indexes %s' % (gae_path, war_path))
+        else:
+            os.system('%s/bin/appcfg.sh update_indexes %s' % (gae_path, war_path))
 
-                print "~ "
-                print "~ Done!"
-                print "~ "
-                sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:vacuum_indexes":
-                print '~'
-                print '~ Deleting Unused Indexes'
-                print '~ ---------'
+        print '~'
+        print '~ Deleting Unused Indexes'
+        print '~ ---------'
 
-                if os.name == 'nt':
-                                os.system('%s/bin/appcfg.cmd vacuum_indexes %s' % (gae_path, war_path))
-                else:
-                                os.system('%s/bin/appcfg.sh vacuum_indexes %s' % (gae_path, war_path))
+        if os.name == 'nt':
+                        os.system('%s/bin/appcfg.cmd vacuum_indexes %s' % (gae_path, war_path))
+        else:
+                        os.system('%s/bin/appcfg.sh vacuum_indexes %s' % (gae_path, war_path))
 
-                print "~ "
-                print "~ Done!"
-                print "~ "
-                sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:update_queues":
-                print '~'
-                print '~ Updating Task Queues'
-                print '~ ---------'
+        print '~'
+        print '~ Updating Task Queues'
+        print '~ ---------'
 
-                if os.name == 'nt':
-                                os.system('%s/bin/appcfg.cmd update_queues %s' % (gae_path, war_path))
-                else:
-                                os.system('%s/bin/appcfg.sh update_queues %s' % (gae_path, war_path))
+        if os.name == 'nt':
+            os.system('%s/bin/appcfg.cmd update_queues %s' % (gae_path, war_path))
+        else:
+            os.system('%s/bin/appcfg.sh update_queues %s' % (gae_path, war_path))
 
-                print "~ "
-                print "~ Done!"
-                print "~ "
-                sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:update_dos":
-                print '~'
-                print '~ Updating DoS Protection'
-                print '~ ---------'
+        print '~'
+        print '~ Updating DoS Protection'
+        print '~ ---------'
 
-                if os.name == 'nt':
-                                os.system('%s/bin/appcfg.cmd update_dos %s' % (gae_path, war_path))
-                else:
-                                os.system('%s/bin/appcfg.sh update_dos %s' % (gae_path, war_path))
+        if os.name == 'nt':
+                        os.system('%s/bin/appcfg.cmd update_dos %s' % (gae_path, war_path))
+        else:
+                        os.system('%s/bin/appcfg.sh update_dos %s' % (gae_path, war_path))
 
-                print "~ "
-                print "~ Done!"
-                print "~ "
-                sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:update_cron":
-                print '~'
-                print '~ Updating cron job specifications'
-                print '~ ---------'
+        print '~'
+        print '~ Updating cron job specifications'
+        print '~ ---------'
 
-                if os.name == 'nt':
-                                os.system('%s/bin/appcfg.cmd update_cron %s' % (gae_path, war_path))
-                else:
-                                os.system('%s/bin/appcfg.sh update_cron %s' % (gae_path, war_path))
+        if os.name == 'nt':
+                        os.system('%s/bin/appcfg.cmd update_cron %s' % (gae_path, war_path))
+        else:
+                        os.system('%s/bin/appcfg.sh update_cron %s' % (gae_path, war_path))
 
-                print "~ "
-                print "~ Done!"
-                print "~ "
-                sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:request_logs":
-                print '~'
-                print '~ Downloading Logs'
-                print '~ ---------'
+        print '~'
+        print '~ Downloading Logs'
+        print '~ ---------'
 
-                if os.name == 'nt':
-                        os.system('%s/bin/appcfg.cmd %s request_logs %s ./logs/production.log' % (gae_path, ' '.join(args2), war_path))
-                else:
-                        os.system('%s/bin/appcfg.sh %s request_logs %s ./logs/production.log' % (gae_path, ' '.join(args2), war_path))
+        if os.name == 'nt':
+            os.system('%s/bin/appcfg.cmd %s request_logs %s ./logs/production.log' % (gae_path, ' '.join(args2), war_path))
+        else:
+            os.system('%s/bin/appcfg.sh %s request_logs %s ./logs/production.log' % (gae_path, ' '.join(args2), war_path))
 
-                print "~ "
-                print "~ Done!"
-                print "~ "
-                sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:rollback":
         print '~'
         print '~ Performing rollback'
