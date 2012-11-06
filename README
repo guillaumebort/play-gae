@@ -1,3 +1,7 @@
 Play! framework plugin that allows for the deployment of any Play! application to Google App Engine.
 
 More information on: http://www.playframework.org/modules/gae
+
+
+Push releases to the gh-pages branch so they'll show up here:
+http://q42.github.com/play-gae/
