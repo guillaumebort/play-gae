@@ -87,6 +87,7 @@ def package_as_gae_war(app, env, war_path, war_zip_path, war_exclusion_list = No
     if os.path.exists(os.path.join(war_path, 'WEB-INF/application/modules')):
         shutil.rmtree(os.path.join(war_path, 'WEB-INF/application/modules'))
     copy_directory(os.path.join(app.path, 'conf'), os.path.join(war_path, 'WEB-INF/classes'))
+    copy_directory(os.path.join(app.path, 'public'), os.path.join(war_path, 'public'))
     if os.path.exists(os.path.join(war_path, 'WEB-INF/lib')): shutil.rmtree(os.path.join(war_path, 'WEB-INF/lib'))
     os.mkdir(os.path.join(war_path, 'WEB-INF/lib'))
     for jar in classpath:
