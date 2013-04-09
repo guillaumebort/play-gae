@@ -1,11 +1,7 @@
 package play.modules.gae;
 
-import com.google.appengine.tools.development.ApiProxyLocal;
-import com.google.appengine.tools.development.ApiProxyLocalFactory;
-import com.google.appengine.tools.development.LocalServerEnvironment;
-//import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-//import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 import com.google.appengine.api.datastore.dev.LocalDatastoreService;
+import com.google.appengine.tools.development.*;
 import com.google.apphosting.api.ApiProxy;
 import com.google.apphosting.api.ApiProxy.Environment;
 import play.Play;
@@ -14,8 +10,12 @@ import play.mvc.Scope.Session;
 import play.server.Server;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+//import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
+//import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 
 public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
 
@@ -97,7 +97,10 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
 
     @Override
     public Map<String, Object> getAttributes() {
-        return new HashMap<String, Object>();
+        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+      hashMap.put(LocalEnvironment.REQUEST_END_LISTENERS, new ArrayList<RequestEndListener>());
+
+      return hashMap;
     }
 
     @Override
@@ -151,6 +154,9 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
         }
     }
 
-
+    @Override
+    public long getRemainingMillis() {
+        return 60000;
+    }
 }
 
