@@ -24,3 +24,5 @@ samples-and-tests/lists-with-gae/true
 *.iml
 
 play-framework
+manifest
+out
