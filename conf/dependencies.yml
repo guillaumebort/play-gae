@@ -1,0 +1,6 @@
+self: play -> play-gae 1.8.1.1.q42
+
+require:
+    - play -> play 1.2.5
+    - com.google.appengine -> appengine-api-1.0-sdk 1.8.1.1
+    - com.google.appengine -> appengine-api-stubs 1.8.1.1
