@@ -6,4 +6,4 @@ More information on: http://www.playframework.org/modules/gae
 Build by running `play build-module`
 
 Push releases to the gh-pages branch so they'll show up here:
-http://q42.github.com/play-gae/
+http://q42.github.io/play-gae/
