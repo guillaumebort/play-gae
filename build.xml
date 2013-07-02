@@ -12,16 +12,13 @@
         </fileset>
         <fileset dir="lib">
             <include name="*.jar"/>                        
-        </fileset> 
+        </fileset>
+        <fileset dir="committedlibs">
+            <include name="*.jar"/>                        
+        </fileset>
     </path>
     
-    <target name="checkVersion">
-        <condition property="java6">
-            <matches pattern="1.6" string="${ant.java.version}"/>
-        </condition>
-    </target>
-    
-    <target name="build" depends="compile-java6">
+    <target name="build" depends="compile">
         
         <copy todir="tmp/classes">
             <fileset dir="src">
@@ -41,19 +38,12 @@
         <delete dir="tmp" />
     </target>
     
-    <target name="compile-java6" depends="checkVersion">
+    <target name="compile">
         <echo>Disabling annotation processing</echo>
         <mkdir dir="tmp/classes" />
         <javac srcdir="src" destdir="tmp/classes" target="1.7" debug="true">
             <classpath refid="project.classpath" />
             <compilerarg value="-proc:none" />
-        </javac>
-    </target>
-    
-    <target name="compile-java5" depends="checkVersion" unless="java6">
-        <mkdir dir="tmp/classes" />
-        <javac srcdir="src" destdir="tmp/classes" target="1.5" debug="true">
-            <classpath refid="project.classpath" />
         </javac>
     </target>
     
