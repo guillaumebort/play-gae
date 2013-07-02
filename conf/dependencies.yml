@@ -5,6 +5,7 @@ require:
     - com.google.appengine -> appengine-api-1.0-sdk 1.8.1.1
     - com.google.appengine -> appengine-api-stubs 1.8.1.1
     - com.google.appengine -> appengine-tools-sdk 1.8.1.1
+    - com.google.appengine -> appengine-testing 1.8.1.1
     - committedlibs -> appengine-local-runtime-shared
     - committedlibs -> appengine-local-runtime
 
