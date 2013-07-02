@@ -1,4 +1,5 @@
 lib/play-gae.jar
+lib
 .DS_Store
 test-result
 tmp
