@@ -55,6 +55,11 @@ public class PlayDevEnvironment implements Environment, LocalServerEnvironment {
     }
 
     @Override
+    public String getModuleId() {
+        return "TODO"; // FIXME
+    }
+
+    @Override
     public String getVersionId() {
         return "1.0";
     }
