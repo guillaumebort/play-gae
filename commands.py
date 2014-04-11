@@ -84,6 +84,9 @@ def package_as_gae_war(app, env, war_path, war_zip_path, war_exclusion_list = No
         shutil.rmtree(os.path.join(war_path, 'WEB-INF/application/logs'))
     if os.path.exists(os.path.join(war_path, 'WEB-INF/application/tmp')):
         shutil.rmtree(os.path.join(war_path, 'WEB-INF/application/tmp'))
+    # Lukas&Arian: lib staat nu dubbel in de export!
+    if os.path.exists(os.path.join(war_path, 'WEB-INF/application/lib')):
+        shutil.rmtree(os.path.join(war_path, 'WEB-INF/application/lib'))
     if os.path.exists(os.path.join(war_path, 'WEB-INF/application/modules')):
         shutil.rmtree(os.path.join(war_path, 'WEB-INF/application/modules'))
     copy_directory(os.path.join(app.path, 'conf'), os.path.join(war_path, 'WEB-INF/classes'))
@@ -232,9 +235,9 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-                os.system('%s/bin/appcfg.cmd update %s' % (gae_path, war_path))
+                os.system('%s/bin/appcfg.cmd --oauth2 update %s' % (gae_path, war_path))
         else:
-                os.system('%s/bin/appcfg.sh update %s' % (gae_path, war_path))
+                os.system('%s/bin/appcfg.sh --oauth2 update %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -283,9 +286,9 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-            os.system('%s/bin/appcfg.cmd update_indexes %s' % (gae_path, war_path))
+            os.system('%s/bin/appcfg.cmd --oauth2 update_indexes %s' % (gae_path, war_path))
         else:
-            os.system('%s/bin/appcfg.sh update_indexes %s' % (gae_path, war_path))
+            os.system('%s/bin/appcfg.sh --oauth2 update_indexes %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -297,9 +300,9 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-                        os.system('%s/bin/appcfg.cmd vacuum_indexes %s' % (gae_path, war_path))
+                        os.system('%s/bin/appcfg.cmd --oauth2 vacuum_indexes %s' % (gae_path, war_path))
         else:
-                        os.system('%s/bin/appcfg.sh vacuum_indexes %s' % (gae_path, war_path))
+                        os.system('%s/bin/appcfg.sh --oauth2 vacuum_indexes %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -311,9 +314,9 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-            os.system('%s/bin/appcfg.cmd update_queues %s' % (gae_path, war_path))
+            os.system('%s/bin/appcfg.cmd --oauth2 update_queues %s' % (gae_path, war_path))
         else:
-            os.system('%s/bin/appcfg.sh update_queues %s' % (gae_path, war_path))
+            os.system('%s/bin/appcfg.sh --oauth2 update_queues %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -325,9 +328,9 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-                        os.system('%s/bin/appcfg.cmd update_dos %s' % (gae_path, war_path))
+                        os.system('%s/bin/appcfg.cmd --oauth2 update_dos %s' % (gae_path, war_path))
         else:
-                        os.system('%s/bin/appcfg.sh update_dos %s' % (gae_path, war_path))
+                        os.system('%s/bin/appcfg.sh --oauth2 update_dos %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -339,9 +342,9 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-                        os.system('%s/bin/appcfg.cmd update_cron %s' % (gae_path, war_path))
+                        os.system('%s/bin/appcfg.cmd --oauth2 update_cron %s' % (gae_path, war_path))
         else:
-                        os.system('%s/bin/appcfg.sh update_cron %s' % (gae_path, war_path))
+                        os.system('%s/bin/appcfg.sh --oauth2 update_cron %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -367,9 +370,9 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-            os.system('%s/bin/appcfg.cmd rollback %s' % (gae_path, war_path))
+            os.system('%s/bin/appcfg.cmd --oauth2 rollback %s' % (gae_path, war_path))
         else:
-            os.system('%s/bin/appcfg.sh rollback %s' % (gae_path, war_path))
+            os.system('%s/bin/appcfg.sh --oauth2 rollback %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -381,9 +384,9 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-                os.system('%s/bin/appcfg.cmd backends update %s' % (gae_path, war_path))
+                os.system('%s/bin/appcfg.cmd --oauth2 backends update %s' % (gae_path, war_path))
         else:
-                os.system('%s/bin/appcfg.sh backends update %s' % (gae_path, war_path))
+                os.system('%s/bin/appcfg.sh --oauth2 backends update %s' % (gae_path, war_path))
         print "~ "
         print "~ Done!"
         print "~ "
@@ -393,9 +396,9 @@ def execute(**kargs):
         print '~ Listing backend specifications'
         print '~ ---------'
         if os.name == 'nt':
-                os.system('%s/bin/appcfg.cmd backends list %s' % (gae_path, war_path))
+                os.system('%s/bin/appcfg.cmd --oauth2 backends list %s' % (gae_path, war_path))
         else:
-                os.system('%s/bin/appcfg.sh backends list %s' % (gae_path, war_path))
+                os.system('%s/bin/appcfg.sh --oauth2 backends list %s' % (gae_path, war_path))
         print "~ "
         print "~ Done!"
         print "~ "
