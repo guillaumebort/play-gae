@@ -308,9 +308,15 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-            os.system('%s/bin/appcfg.cmd --oauth2 update_indexes %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin update_indexes %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 update_indexes %s' % (gae_path, war_path))
         else:
-            os.system('%s/bin/appcfg.sh --oauth2 update_indexes %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin update_indexes %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 update_indexes %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -322,9 +328,15 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-                        os.system('%s/bin/appcfg.cmd --oauth2 vacuum_indexes %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin vacuum_indexes %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 vacuum_indexes %s' % (gae_path, war_path))
         else:
-                        os.system('%s/bin/appcfg.sh --oauth2 vacuum_indexes %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin vacuum_indexes %s' % (password, gae_path, username, war_path))
+            else:
+                 os.system('%s/bin/appcfg.sh --oauth2 vacuum_indexes %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -336,9 +348,15 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-            os.system('%s/bin/appcfg.cmd --oauth2 update_queues %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin update_queues %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 update_queues %s' % (gae_path, war_path))
         else:
-            os.system('%s/bin/appcfg.sh --oauth2 update_queues %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin update_queues %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 update_queues %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -350,9 +368,15 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-                        os.system('%s/bin/appcfg.cmd --oauth2 update_dos %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin update_dos %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 update_dos %s' % (gae_path, war_path))
         else:
-                        os.system('%s/bin/appcfg.sh --oauth2 update_dos %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin update_dos %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 update_dos %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -364,9 +388,15 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-                        os.system('%s/bin/appcfg.cmd --oauth2 update_cron %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin update_cron %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 update_cron %s' % (gae_path, war_path))
         else:
-                        os.system('%s/bin/appcfg.sh --oauth2 update_cron %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin update_cron %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 update_cron %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -392,9 +422,15 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-            os.system('%s/bin/appcfg.cmd --oauth2 rollback %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin rollback %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 rollback %s' % (gae_path, war_path))
         else:
-            os.system('%s/bin/appcfg.sh --oauth2 rollback %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin rollback %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 rollback %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -406,8 +442,14 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin backends update %s' % (password, gae_path, username, war_path))
+            else:
                 os.system('%s/bin/appcfg.cmd --oauth2 backends update %s' % (gae_path, war_path))
         else:
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin backends update %s' % (password, gae_path, username, war_path))
+            else:
                 os.system('%s/bin/appcfg.sh --oauth2 backends update %s' % (gae_path, war_path))
         print "~ "
         print "~ Done!"
@@ -418,8 +460,14 @@ def execute(**kargs):
         print '~ Listing backend specifications'
         print '~ ---------'
         if os.name == 'nt':
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin backends list %s' % (password, gae_path, username, war_path))
+            else:
                 os.system('%s/bin/appcfg.cmd --oauth2 backends list %s' % (gae_path, war_path))
         else:
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin backends list %s' % (password, gae_path, username, war_path))
+            else:
                 os.system('%s/bin/appcfg.sh --oauth2 backends list %s' % (gae_path, war_path))
         print "~ "
         print "~ Done!"
