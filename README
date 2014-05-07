@@ -1,9 +1,11 @@
 Play! framework plugin that allows for the deployment of any Play! application to Google App Engine.
 
-More information on: http://www.playframework.org/modules/gae
+More information on: http://www.playframework.org/modules/gae.
 
 
-Build by running `play deps --sync` and `play build-module`
+Build by running `build.sh`.
+
+`play gae:deploy` defaults to OAUTH2. Adding two parameters `--username=foo --password=bar` makes it use username:password instead.
 
 Push releases to the gh-pages branch so they'll show up here:
 http://q42.github.io/play-gae/

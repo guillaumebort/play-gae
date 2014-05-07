@@ -15,8 +15,8 @@ except ImportError:
 
 MODULE = "gae"
 
-COMMANDS = ["gae:deploy", "gae:package", "gae:update_indexes", "gae:vacuum_indexes", "gae:update_queues", 
-            "gae:update_dos", "gae:update_cron", "gae:cron_info", "gae:request_logs", "gae:rollback", 
+COMMANDS = ["gae:deploy", "gae:package", "gae:update_indexes", "gae:vacuum_indexes", "gae:update_queues",
+            "gae:update_dos", "gae:update_cron", "gae:cron_info", "gae:request_logs", "gae:rollback",
             "gae:update_backend", "gae:backend_info"]
 HELP = {
     'gae:deploy': "Deploy to Google App Engine",
@@ -36,7 +36,7 @@ HELP = {
 def find(f, seq):
   """Return first item in sequence where f(item) == True."""
   for item in seq:
-    if f(item): 
+    if f(item):
       return item
 
 def package_as_gae_war(app, env, war_path, war_zip_path, war_exclusion_list = None):
@@ -97,14 +97,14 @@ def package_as_gae_war(app, env, war_path, war_zip_path, war_exclusion_list = No
         # SPECIFIC GAE : excludes from the libs all provided and postgres/mysql/jdbc libs
         # keeps appengine-api only
         # appengine-api-labs removed
-        gae_excluded = [ 
-                        'provided-', 'postgres', 'mysql', 'jdbc', 
+        gae_excluded = [
+                        'provided-', 'postgres', 'mysql', 'jdbc',
                         'appengine-agent',  'appengine-agentimpl',
-                        'appengine-agentruntime', 'appengine-api-stubs', 
+                        'appengine-agentruntime', 'appengine-api-stubs',
                         'appengine-local-runtime', 'appengine-testing'
         ]
         if jar.endswith('.jar'):
-            if find(lambda excl: excl in jar, gae_excluded): 
+            if find(lambda excl: excl in jar, gae_excluded):
                 print "~ Excluding JAR %s ..." % jar
             else:
                 shutil.copyfile(jar, os.path.join(war_path, 'WEB-INF/lib/%s' % os.path.split(jar)[1]))
@@ -160,15 +160,18 @@ def execute(**kargs):
     args = kargs.get("args")
     env = kargs.get("env")
 
+    username = ""
+    password = ""
+
     gae_path = None
     war_path = os.path.join(tempfile.gettempdir(), '%s.war' % os.path.basename(app.path))
 
     try:
-        optlist, args2 = getopt.getopt(args, '', ['gae='])
+        optlist, args2 = getopt.getopt(args, '', ['gae=', 'username=', 'password='])
         for o, a in optlist:
             if o == '--gae':
                 gae_path = os.path.normpath(os.path.abspath(a))
-                
+
     except getopt.GetoptError, err:
         print "~ %s" % str(err)
         print "~ "
@@ -179,7 +182,7 @@ def execute(**kargs):
 
     if not gae_path:
         print "~ You need to specify the path of you GAE installation, "
-        print "~ either using the $GAE_PATH environment variable or with the --gae option" 
+        print "~ either using the $GAE_PATH environment variable or with the --gae option"
         print "~ "
         sys.exit(-1)
 
@@ -189,10 +192,23 @@ def execute(**kargs):
         print "~ This module has been tested with GAE 1.5.0"
         print "~ "
         sys.exit(-1)
-        
+
+    itemsToRemove = []
     for a in args:
-         if a.find('--gae') == 0:
-             args.remove(a)
+        if a.find('--gae') == 0:
+            itemsToRemove.insert(0, a)
+
+        if a.find('--username=') != -1:
+            itemsToRemove.insert(0, a)
+            username = a[11:]
+
+        if a.find('--password=') != -1:
+            itemsToRemove.insert(0, a)
+            password = a[11:]
+
+    for item in itemsToRemove:
+        args.remove(item)
+
 
     if command == "gae:deploy":
         print '~'
@@ -214,7 +230,7 @@ def execute(**kargs):
                 print "~ Precompilation has failed, stop deploying."
                 print "~"
                 sys.exit(-1)
-            
+
         except OSError:
             print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
             sys.exit(-1)
@@ -235,8 +251,14 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin update %s' % (password, gae_path, username, war_path))
+            else:
                 os.system('%s/bin/appcfg.cmd --oauth2 update %s' % (gae_path, war_path))
         else:
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin update %s' % (password, gae_path, username, war_path))
+            else:
                 os.system('%s/bin/appcfg.sh --oauth2 update %s' % (gae_path, war_path))
 
         print "~ "
@@ -263,7 +285,7 @@ def execute(**kargs):
                 print "~ Precompilation has failed, stop deploying."
                 print "~"
                 sys.exit(-1)
-            
+
         except OSError:
             print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
             sys.exit(-1)
