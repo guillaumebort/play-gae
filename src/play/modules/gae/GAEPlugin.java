@@ -28,7 +28,7 @@ public class GAEPlugin extends PlayPlugin {
             Logger.warn("");
             Logger.warn("Google App Engine module");
             Logger.warn("~~~~~~~~~~~~~~~~~~~~~~~");
-            Logger.warn("No Google App Engine environment found. Setting up a development environement");
+            Logger.warn("No Google App Engine environment found. Setting up a development environment");
             devEnvironment = PlayDevEnvironment.create();
             System.setProperty("appengine.orm.disable.duplicate.emf.exception", "yes");
             File warExt = Play.getFile("war");
