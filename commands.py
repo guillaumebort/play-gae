@@ -15,8 +15,8 @@ except ImportError:
 
 MODULE = "gae"
 
-COMMANDS = ["gae:deploy", "gae:package", "gae:update_indexes", "gae:vacuum_indexes", "gae:update_queues", 
-            "gae:update_dos", "gae:update_cron", "gae:cron_info", "gae:request_logs", "gae:rollback", 
+COMMANDS = ["gae:deploy", "gae:package", "gae:update_indexes", "gae:vacuum_indexes", "gae:update_queues",
+            "gae:update_dos", "gae:update_cron", "gae:cron_info", "gae:request_logs", "gae:rollback",
             "gae:update_backend", "gae:backend_info"]
 HELP = {
     'gae:deploy': "Deploy to Google App Engine",
@@ -36,7 +36,7 @@ HELP = {
 def find(f, seq):
   """Return first item in sequence where f(item) == True."""
   for item in seq:
-    if f(item): 
+    if f(item):
       return item
 
 def package_as_gae_war(app, env, war_path, war_zip_path, war_exclusion_list = None):
@@ -84,27 +84,30 @@ def package_as_gae_war(app, env, war_path, war_zip_path, war_exclusion_list = No
         shutil.rmtree(os.path.join(war_path, 'WEB-INF/application/logs'))
     if os.path.exists(os.path.join(war_path, 'WEB-INF/application/tmp')):
         shutil.rmtree(os.path.join(war_path, 'WEB-INF/application/tmp'))
+    # Lukas&Arian: lib staat nu dubbel in de export!
+    if os.path.exists(os.path.join(war_path, 'WEB-INF/application/lib')):
+        shutil.rmtree(os.path.join(war_path, 'WEB-INF/application/lib'))
     if os.path.exists(os.path.join(war_path, 'WEB-INF/application/modules')):
         shutil.rmtree(os.path.join(war_path, 'WEB-INF/application/modules'))
     copy_directory(os.path.join(app.path, 'conf'), os.path.join(war_path, 'WEB-INF/classes'))
+    copy_directory(os.path.join(app.path, 'public'), os.path.join(war_path, 'public'))
     if os.path.exists(os.path.join(war_path, 'WEB-INF/lib')): shutil.rmtree(os.path.join(war_path, 'WEB-INF/lib'))
     os.mkdir(os.path.join(war_path, 'WEB-INF/lib'))
     for jar in classpath:
-	# SPECIFIC GAE : excludes from the libs all provided and postgres/mysql/jdbc libs
-	# keeps appengine-api only
-	# appengine-api-labs removed
-	gae_excluded = [ 
-			'provided-', 'postgres', 'mysql', 'jdbc', 
-			'appengine-agent',  'appengine-agentimpl',
-			'appengine-agentruntime', 'appengine-api-stubs', 
-			'appengine-local-runtime', 'appengine-testing',
-			'appengine-api-labs'
-	]
+        # SPECIFIC GAE : excludes from the libs all provided and postgres/mysql/jdbc libs
+        # keeps appengine-api only
+        # appengine-api-labs removed
+        gae_excluded = [
+                        'provided-', 'postgres', 'mysql', 'jdbc',
+                        'appengine-agent',  'appengine-agentimpl',
+                        'appengine-agentruntime', 'appengine-api-stubs',
+                        'appengine-local-runtime', 'appengine-testing'
+        ]
         if jar.endswith('.jar'):
-		if find(lambda excl: excl in jar, gae_excluded): 
-			print "~ Excluding JAR %s ..." % jar
-		else:
-	            shutil.copyfile(jar, os.path.join(war_path, 'WEB-INF/lib/%s' % os.path.split(jar)[1]))
+            if find(lambda excl: excl in jar, gae_excluded):
+                print "~ Excluding JAR %s ..." % jar
+            else:
+                shutil.copyfile(jar, os.path.join(war_path, 'WEB-INF/lib/%s' % os.path.split(jar)[1]))
     if os.path.exists(os.path.join(war_path, 'WEB-INF/framework')): shutil.rmtree(os.path.join(war_path, 'WEB-INF/framework'))
     os.mkdir(os.path.join(war_path, 'WEB-INF/framework'))
     copy_directory(os.path.join(env["basedir"], 'framework/templates'), os.path.join(war_path, 'WEB-INF/framework/templates'))
@@ -157,15 +160,18 @@ def execute(**kargs):
     args = kargs.get("args")
     env = kargs.get("env")
 
+    username = ""
+    password = ""
+
     gae_path = None
     war_path = os.path.join(tempfile.gettempdir(), '%s.war' % os.path.basename(app.path))
 
     try:
-        optlist, args2 = getopt.getopt(args, '', ['gae='])
+        optlist, args2 = getopt.getopt(args, '', ['gae=', 'username=', 'password='])
         for o, a in optlist:
             if o == '--gae':
                 gae_path = os.path.normpath(os.path.abspath(a))
-                
+
     except getopt.GetoptError, err:
         print "~ %s" % str(err)
         print "~ "
@@ -176,7 +182,7 @@ def execute(**kargs):
 
     if not gae_path:
         print "~ You need to specify the path of you GAE installation, "
-        print "~ either using the $GAE_PATH environment variable or with the --gae option" 
+        print "~ either using the $GAE_PATH environment variable or with the --gae option"
         print "~ "
         sys.exit(-1)
 
@@ -186,190 +192,245 @@ def execute(**kargs):
         print "~ This module has been tested with GAE 1.5.0"
         print "~ "
         sys.exit(-1)
-        
+
+    itemsToRemove = []
     for a in args:
-         if a.find('--gae') == 0:
-             args.remove(a)
+        if a.find('--gae') == 0:
+            itemsToRemove.insert(0, a)
+
+        if a.find('--username=') != -1:
+            itemsToRemove.insert(0, a)
+            username = a[11:]
+
+        if a.find('--password=') != -1:
+            itemsToRemove.insert(0, a)
+            password = a[11:]
+
+    for item in itemsToRemove:
+        args.remove(item)
+
 
     if command == "gae:deploy":
-		print '~'
-		print '~ Compiling'
-		print '~ ---------'
+        print '~'
+        print '~ Compiling'
+        print '~ ---------'
 
-		remaining_args = []
-		app.check()
-		java_cmd = app.java_cmd(args)
-		if os.path.exists(os.path.join(app.path, 'tmp')):
-		    shutil.rmtree(os.path.join(app.path, 'tmp'))
-		if os.path.exists(os.path.join(app.path, 'precompiled')):
-		    shutil.rmtree(os.path.join(app.path, 'precompiled'))
-		java_cmd.insert(2, '-Dprecompile=yes')
-		try:
-		    result = subprocess.call(java_cmd, env=os.environ)
-		    if not result == 0:
-		        print "~"
-		        print "~ Precompilation has failed, stop deploying."
-		        print "~"
-		        sys.exit(-1)
-		    
-		except OSError:
-		    print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
-		    sys.exit(-1)
+        remaining_args = []
+        app.check()
+        java_cmd = app.java_cmd(args)
+        if os.path.exists(os.path.join(app.path, 'tmp')):
+            shutil.rmtree(os.path.join(app.path, 'tmp'))
+        if os.path.exists(os.path.join(app.path, 'precompiled')):
+            shutil.rmtree(os.path.join(app.path, 'precompiled'))
+        java_cmd.insert(2, '-Dprecompile=yes')
+        try:
+            result = subprocess.call(java_cmd, env=os.environ)
+            if not result == 0:
+                print "~"
+                print "~ Precompilation has failed, stop deploying."
+                print "~"
+                sys.exit(-1)
 
-		if os.path.exists(os.path.join(app.path, 'tmp')):
-		    shutil.rmtree(os.path.join(app.path, 'tmp'))
+        except OSError:
+            print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
+            sys.exit(-1)
 
-		print '~'
-		print '~ Packaging'
-		print '~ ---------'
+        if os.path.exists(os.path.join(app.path, 'tmp')):
+            shutil.rmtree(os.path.join(app.path, 'tmp'))
+
+        print '~'
+        print '~ Packaging'
+        print '~ ---------'
+
+        package_as_gae_war(app, env, war_path, None, ['submodules'])
 
 
-		package_as_gae_war(app, env, war_path, None)
 
-    
-		print '~'
-		print '~ Deploying'
-		print '~ ---------'
+        print '~'
+        print '~ Deploying'
+        print '~ ---------'
 
-		if os.name == 'nt':
-			os.system('%s/bin/appcfg.cmd update %s' % (gae_path, war_path))
-		else:
-			os.system('%s/bin/appcfg.sh update %s' % (gae_path, war_path))
+        if os.name == 'nt':
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin update %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 update %s' % (gae_path, war_path))
+        else:
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin update %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 update %s' % (gae_path, war_path))
 
-		print "~ "
-		print "~ Done!"
-		print "~ "
-		sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:package":
-		print '~'
-		print '~ Compiling'
-		print '~ ---------'
+        print '~'
+        print '~ Compiling'
+        print '~ ---------'
 
-		remaining_args = []
-		app.check()
-		java_cmd = app.java_cmd(args)
-		if os.path.exists(os.path.join(app.path, 'tmp')):
-		    shutil.rmtree(os.path.join(app.path, 'tmp'))
-		if os.path.exists(os.path.join(app.path, 'precompiled')):
-		    shutil.rmtree(os.path.join(app.path, 'precompiled'))
-		java_cmd.insert(2, '-Dprecompile=yes')
-		try:
-		    result = subprocess.call(java_cmd, env=os.environ)
-		    if not result == 0:
-		        print "~"
-		        print "~ Precompilation has failed, stop deploying."
-		        print "~"
-		        sys.exit(-1)
-		    
-		except OSError:
-		    print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
-		    sys.exit(-1)
+        remaining_args = []
+        app.check()
+        java_cmd = app.java_cmd(args)
+        if os.path.exists(os.path.join(app.path, 'tmp')):
+            shutil.rmtree(os.path.join(app.path, 'tmp'))
+        if os.path.exists(os.path.join(app.path, 'precompiled')):
+            shutil.rmtree(os.path.join(app.path, 'precompiled'))
+        java_cmd.insert(2, '-Dprecompile=yes')
+        try:
+            result = subprocess.call(java_cmd, env=os.environ)
+            if not result == 0:
+                print "~"
+                print "~ Precompilation has failed, stop deploying."
+                print "~"
+                sys.exit(-1)
 
-		if os.path.exists(os.path.join(app.path, 'tmp')):
-		    shutil.rmtree(os.path.join(app.path, 'tmp'))
+        except OSError:
+            print "Could not execute the java executable, please make sure the JAVA_HOME environment variable is set properly (the java executable should reside at JAVA_HOME/bin/java). "
+            sys.exit(-1)
 
-		print '~'
-		print '~ Packaging'
-		print '~ ---------'
+        if os.path.exists(os.path.join(app.path, 'tmp')):
+            shutil.rmtree(os.path.join(app.path, 'tmp'))
 
-		package_as_gae_war(app, env, war_path, None)
-		print "~ "
-		print "~ Done!"
-		print "~ "
-		sys.exit(0)
+        print '~'
+        print '~ Packaging'
+        print '~ ---------'
+
+        package_as_gae_war(app, env, war_path, None, ['submodules'])
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:update_indexes":
-		print '~'
-		print '~ Updating indexes'
-		print '~ ---------'
+        print '~'
+        print '~ Updating indexes'
+        print '~ ---------'
 
-		if os.name == 'nt':
-				os.system('%s/bin/appcfg.cmd update_indexes %s' % (gae_path, war_path))
-		else:
-				os.system('%s/bin/appcfg.sh update_indexes %s' % (gae_path, war_path))
+        if os.name == 'nt':
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin update_indexes %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 update_indexes %s' % (gae_path, war_path))
+        else:
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin update_indexes %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 update_indexes %s' % (gae_path, war_path))
 
-		print "~ "
-		print "~ Done!"
-		print "~ "
-		sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:vacuum_indexes":
-		print '~'
-		print '~ Deleting Unused Indexes'
-		print '~ ---------'
+        print '~'
+        print '~ Deleting Unused Indexes'
+        print '~ ---------'
 
-		if os.name == 'nt':
-				os.system('%s/bin/appcfg.cmd vacuum_indexes %s' % (gae_path, war_path))
-		else:
-				os.system('%s/bin/appcfg.sh vacuum_indexes %s' % (gae_path, war_path))
+        if os.name == 'nt':
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin vacuum_indexes %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 vacuum_indexes %s' % (gae_path, war_path))
+        else:
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin vacuum_indexes %s' % (password, gae_path, username, war_path))
+            else:
+                 os.system('%s/bin/appcfg.sh --oauth2 vacuum_indexes %s' % (gae_path, war_path))
 
-		print "~ "
-		print "~ Done!"
-		print "~ "
-		sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:update_queues":
-		print '~'
-		print '~ Updating Task Queues'
-		print '~ ---------'
+        print '~'
+        print '~ Updating Task Queues'
+        print '~ ---------'
 
-		if os.name == 'nt':
-				os.system('%s/bin/appcfg.cmd update_queues %s' % (gae_path, war_path))
-		else:
-				os.system('%s/bin/appcfg.sh update_queues %s' % (gae_path, war_path))
+        if os.name == 'nt':
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin update_queues %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 update_queues %s' % (gae_path, war_path))
+        else:
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin update_queues %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 update_queues %s' % (gae_path, war_path))
 
-		print "~ "
-		print "~ Done!"
-		print "~ "
-		sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:update_dos":
-		print '~'
-		print '~ Updating DoS Protection'
-		print '~ ---------'
+        print '~'
+        print '~ Updating DoS Protection'
+        print '~ ---------'
 
-		if os.name == 'nt':
-				os.system('%s/bin/appcfg.cmd update_dos %s' % (gae_path, war_path))
-		else:
-				os.system('%s/bin/appcfg.sh update_dos %s' % (gae_path, war_path))
+        if os.name == 'nt':
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin update_dos %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 update_dos %s' % (gae_path, war_path))
+        else:
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin update_dos %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 update_dos %s' % (gae_path, war_path))
 
-		print "~ "
-		print "~ Done!"
-		print "~ "
-		sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:update_cron":
-		print '~'
-		print '~ Updating cron job specifications'
-		print '~ ---------'
+        print '~'
+        print '~ Updating cron job specifications'
+        print '~ ---------'
 
-		if os.name == 'nt':
-				os.system('%s/bin/appcfg.cmd update_cron %s' % (gae_path, war_path))
-		else:
-				os.system('%s/bin/appcfg.sh update_cron %s' % (gae_path, war_path))
+        if os.name == 'nt':
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin update_cron %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 update_cron %s' % (gae_path, war_path))
+        else:
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin update_cron %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 update_cron %s' % (gae_path, war_path))
 
-		print "~ "
-		print "~ Done!"
-		print "~ "
-		sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:request_logs":
-		print '~'
-		print '~ Downloading Logs'
-		print '~ ---------'
+        print '~'
+        print '~ Downloading Logs'
+        print '~ ---------'
 
-		if os.name == 'nt':
-			os.system('%s/bin/appcfg.cmd request_logs %s ./logs/production.log' % (gae_path, war_path))
-		else:
-			os.system('%s/bin/appcfg.sh request_logs %s ./logs/production.log' % (gae_path, war_path))
+        if os.name == 'nt':
+            os.system('%s/bin/appcfg.cmd %s request_logs %s ./logs/production.log' % (gae_path, ' '.join(args2), war_path))
+        else:
+            os.system('%s/bin/appcfg.sh %s request_logs %s ./logs/production.log' % (gae_path, ' '.join(args2), war_path))
 
-		print "~ "
-		print "~ Done!"
-		print "~ "
-		sys.exit(0)
+        print "~ "
+        print "~ Done!"
+        print "~ "
+        sys.exit(0)
     if command == "gae:rollback":
         print '~'
         print '~ Performing rollback'
         print '~ ---------'
 
         if os.name == 'nt':
-            os.system('%s/bin/appcfg.cmd rollback %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin rollback %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 rollback %s' % (gae_path, war_path))
         else:
-            os.system('%s/bin/appcfg.sh rollback %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin rollback %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 rollback %s' % (gae_path, war_path))
 
         print "~ "
         print "~ Done!"
@@ -381,9 +442,15 @@ def execute(**kargs):
         print '~ ---------'
 
         if os.name == 'nt':
-                os.system('%s/bin/appcfg.cmd backends update %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin backends update %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 backends update %s' % (gae_path, war_path))
         else:
-                os.system('%s/bin/appcfg.sh backends update %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin backends update %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 backends update %s' % (gae_path, war_path))
         print "~ "
         print "~ Done!"
         print "~ "
@@ -393,9 +460,15 @@ def execute(**kargs):
         print '~ Listing backend specifications'
         print '~ ---------'
         if os.name == 'nt':
-                os.system('%s/bin/appcfg.cmd backends list %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.cmd --email=%s --passin backends list %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.cmd --oauth2 backends list %s' % (gae_path, war_path))
         else:
-                os.system('%s/bin/appcfg.sh backends list %s' % (gae_path, war_path))
+            if (username != "" and password != ""):
+                os.system('echo %s | %s/bin/appcfg.sh --email=%s --passin backends list %s' % (password, gae_path, username, war_path))
+            else:
+                os.system('%s/bin/appcfg.sh --oauth2 backends list %s' % (gae_path, war_path))
         print "~ "
         print "~ Done!"
         print "~ "
